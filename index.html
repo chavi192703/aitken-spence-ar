@@ -1,0 +1,260 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Interactive microsite for the Aitken Spence PLC Integrated Annual Report 2025/26.">
+<link rel="icon" href="assets/aria-face.webp" type="image/webp">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+<title>Aitken Spence Annual Report 2025/26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="site.css">
+
+<div class="progress" id="prog" aria-hidden="true"></div>
+<div class="panel">
+  <!-- ============ HERO ============ -->
+  <div class="sky" id="top">
+    <div class="in">
+      <header class="nav">
+        <a class="logo" href="#top" aria-label="Aitken Spence home"><img src="assets/logo.webp" alt="Aitken Spence" width="288" height="96"></a>
+        <nav aria-label="Sections">
+          <a href="#growth">Performance</a><a href="#chart-gen">Chart generator</a><a href="#sectors">Businesses</a><a href="#esg">Sustainability</a><a href="#build">Build your report</a>
+        </nav>
+        <a class="pill pill-blue" href="https://www.aitkenspence.com/images/ar/2025-2026/aitken-spence-annual-report-2025-2026-high.pdf" target="_blank" rel="noopener">Full report ↗</a>
+      </header>
+    </div>
+    <div class="word" aria-hidden="true">SPENCE</div>
+    <div class="in">
+      <div class="stage">
+        <div class="left-col">
+          <div class="float mini">
+            <div class="orb" aria-hidden="true"></div>
+            <b>12 countries, one group</b>
+            <span>From East Africa to the South Pacific, across 4 sectors and 17 segments.</span>
+          </div>
+          <div class="dash" aria-hidden="true"></div>
+        </div>
+        <div class="globe-wrap mascot-wrap">
+          <canvas id="mascot" aria-label="Aria, the Aitken Spence report guide, a blue leopard waving" role="img"></canvas>
+          <div class="halo" aria-hidden="true"></div>
+          <button type="button" class="bubble" id="bubbleBtn"><b>Hi, I'm Aria!</b><span>Ask me anything about the 2025/26 report</span></button>
+          <div class="m-loading" id="mLoading">Loading Aria…</div>
+        </div>
+        <div class="right-col">
+          <div class="float people">
+            <span class="av" aria-hidden="true"><i style="background:#1d5fe6">AS</i><i style="background:#c08a34">HR</i><i style="background:#2c8a7d">+</i></span>
+            <span><b>20,300+</b><small>people</small></span>
+          </div>
+          <div class="covers" aria-label="Report volumes">
+            <div class="cover c1"><small>Sustainability</small><b>Spence IMPACT</b><div class="row"><span>SBTi validated</span><span>NET ZERO 2030</span></div></div>
+            <div class="cover c2"><small>Governance</small><b>Board &amp; risk</b><div class="row"><span>pp. 68–158</span><span>GRI 2-9</span></div></div>
+            <div class="cover c3"><small>Integrated Annual Report</small><b>2025 / 2026</b><div class="row"><span>AITKEN SPENCE PLC</span><span>44TH</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="band">
+      <div class="side l">
+        <div class="icons" aria-hidden="true"><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4c3 3 3 13 0 16M12 4c-3 3-3 13 0 16"/></svg></span><span><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span></div>
+        <p>A diversified Sri Lankan conglomerate of 115 companies, built on 155 years of heritage since 1868.</p>
+        <a class="more" href="#sectors">Our businesses</a>
+      </div>
+      <div class="mid">
+        <a class="pill pill-line" href="#growth">Explore the year <span aria-hidden="true">⟶</span></a>
+        <h1>Navigating complexity with confidence</h1>
+      </div>
+      <div class="side r">
+        <span class="tagline">Group revenue</span>
+        <div class="big"><b class="num">Rs. 96.6Bn</b><span>FY2025/26<br>+1.6% YoY</span></div>
+        <a class="more" href="#chart-gen">View the numbers</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ GROWTH ============ -->
+  <section class="s in" id="growth">
+    <div class="split">
+      <div>
+        <div class="eyebrow">Financial performance</div>
+        <h2 style="margin-top:12px">A year of resilient profit growth</h2>
+        <p class="lede">Profit before tax rose 18.3% to Rs. 12.8 Bn. Lower interest rates and the restructuring of borrowings cut net finance costs by 22.2%, and overseas operations delivered 61.4% of profits.</p>
+        <p class="src" style="margin-top:14px">Source: Financial Highlights p.14 · Chairperson's Message pp.40–44</p>
+      </div>
+      <div class="vis">
+        <div class="slab">
+          <div class="hero-num"><small>Profit before tax</small><b class="num">Rs. 12.8 Bn</b></div>
+          <svg class="spark" viewBox="0 0 400 180" preserveAspectRatio="none" aria-hidden="true">
+            <path class="spa" d="M0 120 L100 75 L200 128 L300 112 L400 70 L400 180 L0 180Z" fill="rgba(255,255,255,.16)"/>
+            <polyline class="spk" pathLength="1" points="0,120 100,75 200,128 300,112 400,70" fill="none" stroke="#fff" stroke-width="2.5"/>
+            <circle class="spd" cx="400" cy="70" r="5" fill="#c08a34"/>
+          </svg>
+        </div>
+        <div class="chipcard cc1"><i>₨</i><div><b>Rs. 16.74</b><span>Earnings per share</span></div></div>
+        <div class="chipcard cc2"><i>▲</i><div><b>+26.9%</b><span>Profit after tax</span></div></div>
+        <div class="chipcard cc3"><i>%</i><div><b>8.18%</b><span>Return on equity</span></div></div>
+      </div>
+    </div>
+    <div class="kpis" id="kpis"></div>
+  </section>
+
+  <!-- ============ CHART GENERATOR ============ -->
+  <section class="s in" id="chart-gen" style="padding-top:0">
+    <div class="head">
+      <div><div class="eyebrow">Explore the numbers</div><h2 style="margin-top:12px">Chart generator</h2>
+      <p class="lede">Pick a financial or sustainability indicator and view it as bars, a line, or a table.</p></div>
+    </div>
+    <div class="gen">
+      <aside>
+        <div><label class="lbl" for="kpiSel">Indicator</label><select id="kpiSel"></select></div>
+        <div><span class="lbl">View as</span>
+          <div class="seg" id="viewSeg" role="group" aria-label="Chart type">
+            <button type="button" data-v="bar" aria-pressed="true">Bar</button><button type="button" data-v="line" aria-pressed="false">Line</button><button type="button" data-v="table" aria-pressed="false">Table</button>
+          </div></div>
+        <p class="note" id="kpiNote"></p>
+      </aside>
+      <div class="chartbox">
+        <h3 id="chTitle"></h3><p class="sub" id="chSub"></p>
+        <div id="chartWrap"><svg id="chart" viewBox="0 0 720 340" role="img"></svg></div>
+        <div class="tbl" id="tableWrap" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTORS ============ -->
+  <section class="s in" id="sectors" style="padding-top:0">
+    <div class="head" style="justify-content:center;text-align:center">
+      <div><div class="eyebrow">Who we are</div><h2 style="margin-top:12px">Four sectors, seventeen segments</h2>
+      <p class="lede" style="margin-inline:auto">Tourism had its strongest year on record. Apparel losses pulled Strategic Investments below zero, while printing and packaging had an exceptional year.</p></div>
+    </div>
+    <div class="sectors" id="secCards"></div>
+    <div class="pbtbar" id="pbtBars" aria-label="Profit before tax by sector, FY2025/26"></div>
+    <div class="pbtbar" id="valueSplit">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><h3>How Rs. 48.5 Bn of value was shared</h3><span class="src">Value added statement · p.22</span></div>
+      <div class="vbar" id="vbar" role="img" aria-label="Value distribution: employees 40.3%, retained 27.0%, lenders 16.5%, governments 12.9%, shareholders 3.3%"></div>
+      <div class="vleg" id="vleg"></div>
+    </div>
+  </section>
+
+  <!-- ============ ESG ============ -->
+  <div class="esg-band" id="esg">
+    <section class="s in">
+      <div class="head">
+        <div><div class="eyebrow">Spence IMPACT</div><h2 style="margin-top:12px">People. Planet. Prosperity.</h2>
+        <p class="lede">The first Sri Lankan conglomerate with SBTi-validated near-term targets. The Kerawalapitiya waste-to-energy plant turned 180,241 t of municipal waste into grid power this year.</p></div>
+        <div class="src">Source: pp.15–21</div>
+      </div>
+      <div class="esg">
+        <div class="eg"><h3>Planet</h3>
+          <div class="donut"><svg width="84" height="84" viewBox="0 0 42 42" aria-label="32.4% renewable"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#dbe4ef" stroke-width="5"/><circle cx="21" cy="21" r="15.9" fill="none" stroke="#1d5fe6" stroke-width="5" stroke-linecap="round" stroke-dasharray="32.4 67.6" stroke-dashoffset="25" id="dArc"/><text x="21" y="23.5" text-anchor="middle" font-size="7" fill="#0d2440" font-family="IBM Plex Mono, monospace">32.4%</text></svg>of energy consumed came from renewables</div>
+          <div class="row"><span>Scope 1 + 2 emissions</span><b>53,103 tCO₂e</b></div>
+          <div class="row"><span>Emissions reduced / offset</span><b>188,922 tCO₂e</b></div>
+          <div class="row"><span>Total energy used</span><b>794,758 GJ</b></div>
+          <div class="row"><span>Water withdrawn</span><b>1,245,545 m³</b></div>
+        </div>
+        <div class="eg"><h3>People</h3>
+          <div class="row"><span>Employees</span><b>20,300</b></div>
+          <div class="row"><span>Female representation</span><b>37%</b></div>
+          <div class="row"><span>Female managers</span><b>22%</b></div>
+          <div class="row"><span>Employee benefits paid</span><b>Rs. 19.6 Bn</b></div>
+          <div class="row"><span>Training investment</span><b>Rs. 87 Mn</b></div>
+          <div class="row"><span>Avg. training hours</span><b>16 hrs</b></div>
+        </div>
+        <div class="eg"><h3>Prosperity</h3>
+          <div class="row"><span>Value added to economy</span><b>Rs. 48.5 Bn</b></div>
+          <div class="row"><span>Foreign exchange facilitated</span><b>Rs. 113.8 Bn</b></div>
+          <div class="row"><span>Taxes paid</span><b>Rs. 14.8 Bn</b></div>
+          <div class="row"><span>Community development funds</span><b>Rs. 85.7 Mn</b></div>
+          <div class="row"><span>Hotel guest nights</span><b>1,170,224</b></div>
+          <div class="row"><span>Power generated</span><b>123,921 MWh</b></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============ HIGHLIGHTS ============ -->
+  <section class="s in" id="highlights">
+    <div class="head">
+      <div><div class="eyebrow">Report highlights</div><h2 style="margin-top:12px">Key moments, lasting impact</h2></div>
+      <div class="src">Source: Our Year at a Glance &amp; Awards, pp.25–33</div>
+    </div>
+    <div class="hl">
+      <div class="card dark"><span class="tag">Hotels</span><h3>Heritance earns Superbrands status</h3><p>Heritance Hotels and Resorts was awarded Superbrands Sri Lanka status for 2025.</p></div>
+      <div class="card"><span class="tag">Destination management</span><h3>GSTC certification</h3><p>Aitken Spence Travels achieved Global Sustainable Tourism Council certification.</p></div>
+      <div class="card"><span class="tag">Power generation</span><h3>Five years of waste-to-energy</h3><p>The 10 MW Kerawalapitiya plant passed 1,000,000 tonnes of waste disposed since December 2020.</p></div>
+      <div class="card"><span class="tag">Integrated logistics</span><h3>100,000 sq. ft. green warehouse</h3><p>Electric handling equipment and a CILT 2026 Gold Award for Sustainability.</p></div>
+      <div class="card"><span class="tag">Freight forwarding</span><h3>45 years of Ace Cargo</h3><p>Sri Lanka's pioneering international freight forwarder marked 45 years in June 2025.</p></div>
+      <div class="card"><span class="tag">Overseas</span><h3>Cold room in Dhaka</h3><p>Ace Bangladesh laid the foundation for a new cold room and warehouse in August 2025.</p></div>
+      <div class="card"><span class="tag">Printing &amp; packaging</span><h3>Fully automated rigid box line</h3><p>A new automated machine replaced semi-automated production, lifting capacity.</p></div>
+      <div class="card dark"><span class="tag">Plantations</span><h3>Value Vault smart card</h3><p>A cooperative shopping card for over 400 estate employees at Elpitiya Plantations.</p></div>
+    </div>
+    <div class="awards">
+      <div class="aw"><b>TAGS Awards 2025 — Gold</b>Diversified Holdings, plus the overall Top Ten</div>
+      <div class="aw"><b>EFC Best Employer Awards 2025</b>Top 10 Companies</div>
+      <div class="aw"><b>LMD Hall of Fame</b>8th among the Top 20 Movers and Shakers</div>
+      <div class="aw"><b>Sri Lanka Leadership Awards 2025</b>Best Employer Brand</div>
+    </div>
+    <h3 style="margin:56px 0 4px;font-size:1.3rem">A heritage of firsts</h3>
+    <div class="timeline">
+      <div class="tl"><div class="y">1868</div><p>Clark &amp; Spence founded as merchants in Galle.</p></div>
+      <div class="tl"><div class="y">1974</div><p>Neptune Hotel, designed by Geoffrey Bawa, opens in Beruwala.</p></div>
+      <div class="tl"><div class="y">1983</div><p>Listed on the Colombo Stock Exchange.</p></div>
+      <div class="tl"><div class="y">1994</div><p>Heritance Kandalama, the world's first LEED-certified hotel.</p></div>
+      <div class="tl"><div class="y">1996</div><p>The Tea Factory, Sri Lanka's first themed hotel.</p></div>
+      <div class="tl"><div class="y">2002</div><p>Signs the UN Global Compact; enters Oman.</p></div>
+      <div class="tl"><div class="y">2013</div><p>First international port manager in Fiji.</p></div>
+      <div class="tl"><div class="y">2020</div><p>Sri Lanka's first waste-to-energy plant starts operating.</p></div>
+      <div class="tl"><div class="y">2024</div><p>Enters BPO through Port City BPO.</p></div>
+      <div class="tl"><div class="y">2026</div><p>SBTi validates the Group's near-term targets.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ BUILDER ============ -->
+  <section class="s in" id="build" style="padding-top:0">
+    <div class="head">
+      <div><div class="eyebrow">Your report, your way</div><h2 style="margin-top:12px">Build your own report</h2>
+      <p class="lede">Tick the chapters you need. Your reading list links straight to each page in the full PDF.</p></div>
+    </div>
+    <div class="builder">
+      <div class="chap" id="chapters"></div>
+      <div class="pack" aria-live="polite">
+        <h3 style="font-size:1.2rem">My report</h3>
+        <div class="count" id="packCount"></div>
+        <ol id="packList"></ol>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+          <a class="pill" style="background:#fff;color:#0d3f9e" href="https://www.aitkenspence.com/images/ar/2025-2026/aitken-spence-annual-report-2025-2026-high.pdf" target="_blank" rel="noopener">Open full PDF ↗</a>
+          <button type="button" class="linkbtn" id="clearBtn">Clear selection</button>
+        </div>
+        <button type="button" class="pill dlbtn" id="dlBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Download summary PDF</button>
+        <p class="dlmsg" id="dlMsg" role="status">A branded PDF of your chosen chapters, with key figures and charts.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="in grid">
+      <div><div class="logo"><img src="assets/logo-white.webp" alt="Aitken Spence" width="288" height="96"></div>Inspire to Create Great Futures for All</div>
+      <div>315 Vauxhall Street, Colombo 2, Sri Lanka<br>comsec@aitkenspence.lk</div>
+      <div>Concept microsite built from the Integrated Annual Report 2025/26.<br>Figures in Sri Lankan rupees unless stated.</div>
+    </div>
+  </footer>
+</div>
+
+<button type="button" class="launcher" id="launcher" aria-label="Chat with Aria about the report" aria-expanded="false"><span class="ping" aria-hidden="true"></span><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff" aria-hidden="true" id="pawIcon"><ellipse cx="12" cy="15.5" rx="4.6" ry="3.8"/><circle cx="6.2" cy="10" r="2"/><circle cx="9.6" cy="6.6" r="2"/><circle cx="14.4" cy="6.6" r="2"/><circle cx="17.8" cy="10" r="2"/></svg></button>
+<div class="chat" id="chat" role="dialog" aria-label="Chat with Aria" hidden>
+  <header>
+    <div class="face"><img id="faceImg" alt="" hidden></div>
+    <div><b>Aria</b><small id="chatStatus">Your guide to the 2025/26 report</small></div>
+    <button type="button" id="chatClose" aria-label="Close chat">×</button>
+  </header>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="sugg" id="sugg"></div>
+  <form id="chatForm" autocomplete="off">
+    <input id="chatInput" type="text" placeholder="Ask about profits, sectors, ESG…" aria-label="Your question">
+    <button type="submit" id="sendBtn" aria-label="Send">➤</button>
+  </form>
+  <div class="foot">Answers draw on the Annual Report 2025/26. Check key figures in the full PDF.</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>window.LEO={"mask0": "assets/aria-mask0.webp", "mbox0": [360, 333, 464, 443], "iris0": "assets/aria-iris0.webp", "ibox0": [381, 339, 467, 441], "mask1": "assets/aria-mask1.webp", "mbox1": [676, 346, 789, 449], "iris1": "assets/aria-iris1.webp", "ibox1": [678, 341, 772, 449], "base": ["assets/aria-base-0.webp","assets/aria-base-1.webp","assets/aria-base-2.webp"], "cuts": [0,426,852,1278], "bw": 1230, "bh": 1278, "W": 1230, "H": 1278, "face": "assets/aria-face.webp"};</script>
+<script src="app.js"></script>
+
+</body></html>
