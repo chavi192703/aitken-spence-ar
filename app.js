@@ -15,63 +15,172 @@ document.getElementById("kpis").innerHTML=K.map(k=>{
  return `<div class="kpi"><div class="l">${k[0]}</div><div class="v num"><small>Rs.</small>${k[1]}<small>${k[2]}</small></div><span class="chip ${c}">${a} ${Math.abs(k[3]).toFixed(1)}%</span><span class="p">FY24/25: ${k[4]}</span></div>`;}).join("");
 
 /* ---------- chart generator ---------- */
-const D={
- rev:{n:"Group revenue",u:"Rs. Mn",y:["2021/22","2022/23","2024/25","2025/26"],v:[54696,98104,95095,96591],note:"FY2023/24 is not shown here; see the Ten Year Summary on p.496 of the full report."},
- pbt:{n:"Profit before tax",u:"Rs. Mn",y:["2021/22","2022/23","2024/25","2025/26"],v:[14244,11201,10826,12812],note:"FY2023/24 is not shown here; see the Ten Year Summary on p.496."},
- ebitda:{n:"EBITDA",u:"Rs. Mn",y:["2021/22","2022/23","2024/25","2025/26"],v:[23100,30100,25451,26590],note:"FY2021/22 and FY2022/23 rounded to Rs. 0.1 Bn as published in results announcements."},
- pat:{n:"Profit after tax",u:"Rs. Mn",y:["2024/25","2025/26"],v:[7179,9107]},
- att:{n:"Profit attributable to equity holders",u:"Rs. Mn",y:["2024/25","2025/26"],v:[5331,6796]},
- assets:{n:"Total assets",u:"Rs. Mn",y:["2024/25","2025/26"],v:[202027,227618]},
- equity:{n:"Total equity",u:"Rs. Mn",y:["2024/25","2025/26"],v:[89889,104253]},
- eps:{n:"Earnings per share",u:"Rs.",y:["2024/25","2025/26"],v:[13.13,16.74],d:2},
- navps:{n:"Net asset value per share",u:"Rs.",y:["2024/25","2025/26"],v:[190.23,218.90],d:2},
- roe:{n:"Return on equity",u:"%",y:["2024/25","2025/26"],v:[7.06,8.18],d:2},
- roce:{n:"Return on capital employed",u:"%",y:["2024/25","2025/26"],v:[14.34,14.54],d:2},
- tax:{n:"Taxes paid to governments",u:"Rs. Mn",y:["2024/25","2025/26"],v:[13594,14842]},
- va:{n:"Value added by the Group",u:"Rs. Mn",y:["2024/25","2025/26"],v:[44379,48535]},
- fx:{n:"Foreign exchange facilitated",u:"Rs. Mn",y:["2024/25","2025/26"],v:[163091,113789],note:"Lower money-transfer volumes after a decision to focus on higher-performing lines."},
- emp:{n:"Employees",u:"people",y:["2024/25","2025/26"],v:[16513,20300]},
- female:{n:"Female representation",u:"%",y:["2024/25","2025/26"],v:[42,37]},
- ghg:{n:"Scope 1 + 2 GHG emissions",u:"tCO₂e",y:["2024/25","2025/26"],v:[52402,53103]},
- avoid:{n:"Emissions reduced / offset",u:"tCO₂e",y:["2024/25","2025/26"],v:[208891,188922]},
- energy:{n:"Total energy consumption",u:"GJ",y:["2024/25","2025/26"],v:[734143,794758]},
- renew:{n:"Renewable energy consumed",u:"GJ",y:["2024/25","2025/26"],v:[215375,257375]},
- water:{n:"Water withdrawn",u:"m³",y:["2024/25","2025/26"],v:[1303811,1245545]},
- waste:{n:"Solid waste generated",u:"tonnes",y:["2024/25","2025/26"],v:[26888,22618]}};
-const groups=[["Financial",["rev","pbt","ebitda","pat","att","assets","equity","eps","navps","roe","roce"]],["Economic contribution",["tax","va","fx"]],["Sustainability",["emp","female","ghg","avoid","energy","renew","water","waste"]]];
+/* ---------- chart generator (Chart.js) ---------- */
+const SECT=["Tourism","Maritime & Freight","Strategic Investments","Services"];
+const PAL=["#1d5fe6","#c08a34","#2c8a7d","#0d2440","#8fb4ff","#c2452f","#18834f","#7a5cff"];
+const FY=y=>"FY"+y;
+const trend=(n,u,y,v,extra)=>Object.assign({kind:"trend",n,u,labels:y.map(FY),series:[{name:n,data:v}]},extra||{});
+const parts=(n,u,labels,v,extra)=>Object.assign({kind:"parts",n,u,labels,series:[{name:"FY2025/26",data:v}]},extra||{});
+const group=(n,u,labels,series,extra)=>Object.assign({kind:"group",n,u,labels,series},extra||{});
+const Y2=["2024/25","2025/26"],Y4=["2021/22","2022/23","2024/25","2025/26"];
+const DS={
+ rev:trend("Group revenue","Rs. Mn",Y4,[54696,98104,95095,96591],{note:"FY2023/24 is not shown here; see the Ten Year Summary on p.496 of the full report."}),
+ pbt:trend("Profit before tax","Rs. Mn",Y4,[14244,11201,10826,12812],{note:"FY2023/24 is not shown here; see the Ten Year Summary on p.496."}),
+ ebitda:trend("EBITDA","Rs. Mn",Y4,[23100,30100,25451,26590],{note:"FY2021/22 and FY2022/23 rounded to Rs. 0.1 Bn as published in results announcements."}),
+ pat:trend("Profit after tax","Rs. Mn",Y2,[7179,9107]),
+ att:trend("Profit attributable to equity holders","Rs. Mn",Y2,[5331,6796]),
+ assets:trend("Total assets","Rs. Mn",Y2,[202027,227618]),
+ equity:trend("Total equity","Rs. Mn",Y2,[89889,104253]),
+ eps:trend("Earnings per share","Rs.",Y2,[13.13,16.74],{d:2}),
+ navps:trend("Net asset value per share","Rs.",Y2,[190.23,218.90],{d:2}),
+ roe:trend("Return on equity","%",Y2,[7.06,8.18],{d:2}),
+ roce:trend("Return on capital employed","%",Y2,[14.34,14.54],{d:2}),
+ tax:trend("Taxes paid to governments","Rs. Mn",Y2,[13594,14842]),
+ va:trend("Value added by the Group","Rs. Mn",Y2,[44379,48535]),
+ fx:trend("Foreign exchange facilitated","Rs. Mn",Y2,[163091,113789],{note:"Lower money-transfer volumes after a decision to focus on higher-performing lines."}),
+ emp:trend("Employees","people",Y2,[16513,20300]),
+ female:trend("Female representation","%",Y2,[42,37]),
+ ghg:trend("Scope 1 + 2 GHG emissions","tCO₂e",Y2,[52402,53103]),
+ avoid:trend("Emissions reduced / offset","tCO₂e",Y2,[208891,188922]),
+ energy:trend("Total energy consumption","GJ",Y2,[734143,794758]),
+ renew:trend("Renewable energy consumed","GJ",Y2,[215375,257375]),
+ water:trend("Water withdrawn","m³",Y2,[1303811,1245545]),
+ waste:trend("Solid waste generated","tonnes",Y2,[26888,22618]),
+ secPbt:parts("Profit before tax by sector","Rs. Bn",SECT,[7.9,4.7,-0.94,1.2],{d:2,noTotal:true,note:"Strategic Investments made a loss, driven by apparel. Source: Chairperson's Message, pp.41–43."}),
+ secFx:parts("Foreign exchange facilitated by sector","Rs. Bn",SECT,[38.9,6.0,6.8,62.1],{d:1,note:"Source: Facilitation of Foreign Exchange Generation, p.23."}),
+ secEmp:parts("Employees by sector","people",SECT,[3978,1966,7754,6602],{note:"Source: Consolidated ESG Performance, p.20."}),
+ secGhg:parts("Scope 1 + 2 emissions by sector","tCO₂e",SECT,[35290,3460,13805,549],{note:"Source: Consolidated ESG Performance, p.19."}),
+ secEnergy:parts("Energy consumed by sector","GJ",SECT,[437525,42906,310319,4007],{note:"Source: Consolidated ESG Performance, p.16."}),
+ secWater:parts("Water withdrawn by sector","m³",SECT,[912755,31434,281468,19888],{note:"Source: Consolidated ESG Performance, p.17."}),
+ valueDist:parts("How value added was shared","Rs. Mn",["Employees","Retained for growth","Lenders of capital","Governments","Shareholders"],[19561,13082,8012,6257,1624],{total:48535,note:"Total value added: Rs. 48,535 Mn. Source: p.22."}),
+ energyMix:parts("Energy consumption by source","%",["Diesel","Renewables","Grid electricity","LPG","Petrol"],[51.0,32.4,13.9,2.1,0.6],{d:1,note:"Source: Consolidated ESG Performance, p.17."}),
+ taxes:parts("Taxes paid by type","Rs. Mn",["VAT","SSCL","Stamp duty & TDL","Sales tax (overseas)","Green tax","Income & dividend tax"],[3185,524,194,5283,1529,4126],{note:"Total: Rs. 14,841 Mn. Source: Our Commitment Through Taxes, p.24."}),
+ yoy:group("This year vs last year","Rs. Bn",["Revenue","EBITDA","Profit before tax","Profit after tax","Attributable profit"],[{name:"FY2024/25",data:[95.1,25.5,10.8,7.2,5.3]},{name:"FY2025/26",data:[96.6,26.6,12.8,9.1,6.8]}],{d:1,note:"Source: Financial Highlights, p.14."}),
+ geo:group("Sri Lanka vs overseas","%",["Revenue","Profit before tax","Total assets"],[{name:"Sri Lanka",data:[52.7,38.6,54.6]},{name:"Overseas",data:[47.3,61.4,45.4]}],{d:1,stack:true,note:"Source: About Us p.13 and Chairperson's Message p.41."}),
+ workforce:group("Permanent and contract staff by sector","people",SECT,[{name:"Permanent",data:[2170,1069,7541,198]},{name:"Contract",data:[1808,897,213,6404]}],{stack:true,note:"Source: Consolidated ESG Performance, p.20."}),
+ valueYoy:group("Value distributed, two years","Rs. Mn",["Employees","Retained","Lenders","Governments","Shareholders"],[{name:"FY2024/25",data:[17296,11607,8858,4994,1624]},{name:"FY2025/26",data:[19561,13082,8012,6257,1624]}],{note:"Source: Value Creation and Distribution, p.22."}),
+ taxYoy:group("Taxes paid by type, two years","Rs. Mn",["VAT","SSCL","Stamp duty & TDL","Sales tax (overseas)","Green tax","Income & dividend tax"],[{name:"FY2024/25",data:[3583,467,177,4690,1051,3627]},{name:"FY2025/26",data:[3185,524,194,5283,1529,4126]}],{note:"Source: p.24."})
+};
+const DSGROUPS=[
+ ["Financial trends",["rev","pbt","ebitda","pat","att","assets","equity","eps","navps","roe","roce"]],
+ ["Economic contribution",["tax","va","fx"]],
+ ["Sustainability trends",["emp","female","ghg","avoid","energy","renew","water","waste"]],
+ ["Breakdowns",["secPbt","secFx","secEmp","secGhg","secEnergy","secWater","valueDist","energyMix","taxes"]],
+ ["Comparisons",["yoy","geo","workforce","valueYoy","taxYoy"]]];
+const TYPES={
+ trend:[["bar","Bar"],["line","Line"],["area","Area"],["table","Table"]],
+ parts:[["doughnut","Doughnut"],["pie","Pie"],["bar","Bar"],["hbar","Rows"],["polar","Polar"],["table","Table"]],
+ group:[["bar","Bars"],["stacked","Stacked"],["hbar","Rows"],["line","Line"],["table","Table"]]};
 const sel=document.getElementById("kpiSel");
-sel.innerHTML=groups.map(g=>`<optgroup label="${g[0]}">${g[1].map(k=>`<option value="${k}">${D[k].n}</option>`).join("")}</optgroup>`).join("");
-let view="bar";
-try{const s=localStorage.getItem("as-kpi");if(s&&D[s])sel.value=s;}catch(e){}
-const fmt=(v,d)=>v.toLocaleString("en-US",{minimumFractionDigits:d||0,maximumFractionDigits:d||0});
-function nice(max){const p=Math.pow(10,Math.floor(Math.log10(max)));const m=max/p;const s=m<=1.5?.25:m<=3?.5:m<=7?1:2;return{step:s*p,top:Math.ceil(max/(s*p))*s*p};}
+sel.innerHTML=DSGROUPS.map(g=>`<optgroup label="${g[0]}">${g[1].map(k=>`<option value="${k}">${DS[k].n}</option>`).join("")}</optgroup>`).join("");
+let view=null,showVals=true,chart=null;
+try{const s=localStorage.getItem("as-kpi");if(s&&DS[s])sel.value=s;}catch(e){}
+const fmt=(v,d)=>Number(v).toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:d==null?0:d});
+const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const hasNeg=o=>o.series.some(s=>s.data.some(v=>v<0));
+function typeList(o){return TYPES[o.kind].filter(t=>!(hasNeg(o)&&["doughnut","pie","polar"].includes(t[0])));}
+function renderTypes(o){
+ const list=typeList(o);if(!view||!list.some(t=>t[0]===view))view=o.kind==="trend"?"bar":o.kind==="parts"?(hasNeg(o)?"bar":"doughnut"):(o.stack?"stacked":"bar");
+ document.getElementById("viewSeg").innerHTML=list.map(t=>`<button type="button" data-v="${t[0]}" aria-pressed="${t[0]===view}">${t[1]}</button>`).join("");
+}
+if(window.Chart){
+ Chart.defaults.font.family='Figtree, system-ui, -apple-system, "Segoe UI", sans-serif';
+ Chart.defaults.color="#5b6f86";Chart.defaults.font.size=12;
+}
+/* value labels drawn on top of the marks */
+const valuePlugin={id:"valueLabels",afterDatasetsDraw(c,args,opts){
+ if(!opts.show)return;const {ctx}=c,o=opts.spec,isArc=["doughnut","pie","polarArea"].includes(c.config.type);
+ const total=isArc?c.data.datasets[0].data.reduce((a,b)=>a+Math.abs(b),0):0;
+ ctx.save();ctx.font='700 12px Figtree, system-ui, sans-serif';
+ c.data.datasets.forEach((ds,di)=>{const meta=c.getDatasetMeta(di);if(meta.hidden)return;
+  meta.data.forEach((el,i)=>{const v=ds.data[i];if(v==null)return;let x,y,txt=fmt(v,o.d);
+   if(isArc){const share=v/total*100;if(share<4)return;const p=el.tooltipPosition();x=p.x;y=p.y;txt=share.toFixed(share<10?1:0)+"%";ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";}
+   else if(c.options.indexAxis==="y"){if(o.stack&&view==="stacked")return;x=el.x+(v<0?-6:6);y=el.y;ctx.textAlign=v<0?"right":"left";ctx.textBaseline="middle";ctx.fillStyle="#0d2440";}
+   else{if(view==="stacked"){const h=Math.abs(el.base-el.y);if(h<16)return;x=el.x;y=(el.y+el.base)/2;ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";}
+    else{x=el.x;y=v<0?el.y+8:el.y-8;ctx.textAlign="center";ctx.textBaseline=v<0?"top":"bottom";ctx.fillStyle="#0d2440";}}
+   ctx.globalAlpha=Math.min(1,(c._valAlpha??1));ctx.fillText(txt,x,y);});});
+ ctx.restore();}};
+/* doughnut centre total */
+const centrePlugin={id:"centreText",afterDraw(c,args,opts){if(c.config.type!=="doughnut"||!opts.text)return;const {ctx,chartArea:a}=c;const x=(a.left+a.right)/2,y=(a.top+a.bottom)/2;
+ ctx.save();ctx.textAlign="center";ctx.fillStyle="#5b6f86";ctx.font='500 11px "IBM Plex Mono", monospace';ctx.fillText(opts.label,x,y-14);ctx.fillStyle="#0d2440";ctx.font='800 22px Archivo, Figtree, sans-serif';ctx.fillText(opts.text,x,y+12);ctx.restore();}};
+function gradient(c,top,bottom){const a=c.chartArea;if(!a)return top;const g=c.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,top);g.addColorStop(1,bottom);return g;}
+function buildConfig(o){
+ const t=view,labels=o.labels;let type,datasets,extra={};
+ const delay=ctx=>ctx.type==="data"&&ctx.mode==="default"?ctx.dataIndex*110+ctx.datasetIndex*60:0;
+ if(o.kind==="trend"){const data=o.series[0].data,last=data.length-1;
+  if(t==="bar"){type="bar";datasets=[{label:o.n,data,borderRadius:10,borderSkipped:false,maxBarThickness:84,
+   backgroundColor:ctx=>ctx.dataIndex===last?gradient(ctx.chart,"#2f6ff0","#0d3f9e"):gradient(ctx.chart,"#a9c6fb","#5b93f4")}];}
+  else{type="line";datasets=[{label:o.n,data,borderColor:"#1d5fe6",borderWidth:3,tension:.35,fill:t==="area",
+   backgroundColor:ctx=>gradient(ctx.chart,"rgba(29,95,230,.35)","rgba(29,95,230,0)"),
+   pointRadius:ctx=>ctx.dataIndex===last?7:5,pointHoverRadius:9,pointBackgroundColor:ctx=>ctx.dataIndex===last?"#c08a34":"#fff",pointBorderColor:ctx=>ctx.dataIndex===last?"#fff":"#1d5fe6",pointBorderWidth:2.5}];}
+ }else if(o.kind==="parts"){const data=o.series[0].data;
+  if(["doughnut","pie","polar"].includes(t)){type=t==="polar"?"polarArea":t;
+   datasets=[{label:o.n,data,backgroundColor:t==="polar"?PAL.map(c=>c+"cc"):PAL,borderColor:"#fff",borderWidth:3,hoverOffset:14}];
+   if(t==="doughnut")extra.cutout="62%";}
+  else{type="bar";datasets=[{label:o.n,data,borderRadius:8,borderSkipped:false,maxBarThickness:70,backgroundColor:data.map((v,i)=>v<0?"#c2452f":PAL[i%PAL.length])}];
+   if(t==="hbar")extra.indexAxis="y";}
+ }else{
+  type=t==="line"?"line":"bar";
+  datasets=o.series.map((s,i)=>({label:s.name,data:s.data,backgroundColor:i===o.series.length-1&&o.series.length===2&&!o.stack?"#1d5fe6":(o.series.length===2&&!o.stack?"#a9c6fb":PAL[i]),
+   borderColor:type==="line"?PAL[i]:undefined,borderWidth:type==="line"?3:0,tension:.3,pointRadius:5,pointBackgroundColor:"#fff",pointBorderColor:PAL[i],pointBorderWidth:2.5,
+   borderRadius:t==="stacked"?0:7,maxBarThickness:56}));
+  if(t==="hbar")extra.indexAxis="y";
+ }
+ const isArc=["doughnut","pie","polarArea"].includes(type),stacked=t==="stacked",horiz=extra.indexAxis==="y";
+ const total=o.total??o.series[0].data.reduce((a,b)=>a+b,0);
+ const valueAxis={beginAtZero:true,stacked,grid:{color:"#e7edf5",drawTicks:false},border:{display:false},ticks:{padding:8,callback:v=>fmt(v,o.d&&Math.abs(v)<10?o.d:0)}};
+ const catAxis={stacked,grid:{display:false},border:{color:"#dbe4ef"},ticks:{padding:6,font:{weight:"600"}}};
+ return{type,data:{labels,datasets},plugins:[valuePlugin,centrePlugin],options:Object.assign({
+  responsive:true,maintainAspectRatio:false,layout:{padding:{top:isArc?6:26,right:horiz?48:8}},
+  animation:reduceMotion?false:{duration:1000,easing:"easeOutQuart",delay},
+  animations:reduceMotion?{}:(type==="line"?{y:{from:ctx=>ctx.chart.scales.y?ctx.chart.scales.y.getPixelForValue(0):0,duration:900,delay}}:{}),
+  interaction:{mode:isArc?"nearest":"index",intersect:isArc},
+  plugins:{legend:{display:isArc||o.series.length>1,position:isArc?"right":"top",align:isArc?"center":"end",labels:{usePointStyle:true,pointStyle:"circle",boxWidth:8,padding:14,font:{weight:"600"}}},
+   tooltip:{backgroundColor:"#0d2440",padding:12,cornerRadius:10,titleFont:{weight:"700"},callbacks:{label:ctx=>{const v=ctx.raw;let s=` ${ctx.dataset.label&&!isArc?ctx.dataset.label+": ":""}${fmt(v,o.d)} ${o.u}`;if(isArc)s=` ${ctx.label}: ${fmt(v,o.d)} ${o.u} (${(v/total*100).toFixed(1)}%)`;return s;}}},
+   valueLabels:{show:showVals,spec:o},
+   centreText:{text:type==="doughnut"?(o.u==="%"?"100%":fmt(total,o.d)):"",label:o.u==="%"?"TOTAL":"TOTAL · "+o.u.toUpperCase()}},
+  scales:isArc?(type==="polarArea"?{r:{ticks:{display:false},grid:{color:"#e7edf5"}}}:{}):(horiz?{x:valueAxis,y:catAxis}:{x:catAxis,y:valueAxis})},extra)};
+}
 function draw(){
- const o=D[sel.value];
- document.getElementById("chTitle").textContent=o.n;
- const ch=(o.v.at(-1)-o.v.at(-2))/o.v.at(-2)*100;
- document.getElementById("chSub").textContent=`${o.u} · FY${o.y.at(-1)}: ${fmt(o.v.at(-1),o.d)} (${ch>=0?"+":""}${ch.toFixed(1)}% vs prior year)`;
+ const o=DS[sel.value];renderTypes(o);
+ document.getElementById("chTitle").textContent=o.n+(o.kind==="parts"?" (FY2025/26)":o.kind==="group"&&o.series[0].name.startsWith("FY")?" ("+o.series.map(s=>s.name).join(" vs ")+")":"");
+ if(o.kind==="trend"){const v=o.series[0].data,ch=(v.at(-1)-v.at(-2))/v.at(-2)*100;document.getElementById("chSub").textContent=`${o.u} · ${o.labels.at(-1)}: ${fmt(v.at(-1),o.d)} (${ch>=0?"+":""}${ch.toFixed(1)}% vs prior year)`;}
+ else{const t=o.total??o.series.at(-1).data.reduce((a,b)=>a+b,0);document.getElementById("chSub").textContent=o.kind==="parts"&&o.u!=="%"&&!o.noTotal?`${o.u} · Total ${fmt(t,o.d)}`:(o.u==="%"?"Share, %":o.u);}
  document.getElementById("kpiNote").textContent=o.note||"Source: Annual Report 2025/26, pp.14–21.";
  const cw=document.getElementById("chartWrap"),tw=document.getElementById("tableWrap");
- if(view==="table"){cw.hidden=true;tw.hidden=false;
-  tw.innerHTML=`<table><thead><tr><th>Financial year</th><th class="r">${o.u}</th><th class="r">Change</th></tr></thead><tbody>${o.y.map((y,i)=>{const c=i?(o.v[i]-o.v[i-1])/o.v[i-1]*100:null;return `<tr><td>FY${y}</td><td class="r">${fmt(o.v[i],o.d)}</td><td class="r">${c===null?"—":(c>=0?"+":"")+c.toFixed(1)+"%"}</td></tr>`;}).join("")}</tbody></table>`;return;}
+ if(chart){chart.destroy();chart=null;}
+ if(view==="table"||!window.Chart){cw.hidden=true;tw.hidden=false;
+  const head=o.kind==="trend"?["Financial year",o.u,"Change"]:[o.kind==="parts"?"Item":"",...o.series.map(s=>s.name+(o.kind==="parts"?" ("+o.u+")":""))];
+  let rows;
+  if(o.kind==="trend")rows=o.labels.map((l,i)=>{const v=o.series[0].data,c=i?(v[i]-v[i-1])/Math.abs(v[i-1])*100:null;return[l,fmt(v[i],o.d),c===null?"—":(c>=0?"+":"")+c.toFixed(1)+"%"];});
+  else rows=o.labels.map((l,i)=>[l,...o.series.map(s=>fmt(s.data[i],o.d))]);
+  tw.innerHTML=`<table><thead><tr>${head.map((h,i)=>`<th class="${i?"r":""}">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i?"r":""}">${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  if(!window.Chart&&view!=="table")document.getElementById("kpiNote").textContent="The chart library didn't load, so the data is shown as a table.";
+  return;}
  cw.hidden=false;tw.hidden=true;
- const W=720,H=340,L=72,R=20,T=28,B=40,pw=W-L-R,ph=H-T-B,{step,top}=nice(Math.max(...o.v));
- const y=v=>T+ph-(v/top)*ph,n=o.v.length,bw=pw/n;let s="";
- for(let t=0;t<=top+1e-9;t+=step)s+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="#dbe4ef"/><text x="${L-10}" y="${y(t)+4}" text-anchor="end" font-size="11" fill="#5b6f86" font-family="IBM Plex Mono, monospace">${fmt(t,o.d&&step<1?2:0)}</text>`;
- o.y.forEach((yr,i)=>s+=`<text x="${L+bw*i+bw/2}" y="${H-12}" text-anchor="middle" font-size="12" fill="#5b6f86" font-family="IBM Plex Mono, monospace">FY${yr}</text>`);
- if(view==="bar"){const w=Math.min(84,bw*.5);
-  s+=`<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b93f4"/><stop offset="1" stop-color="#1d5fe6"/></linearGradient><linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f6ff0"/><stop offset="1" stop-color="#0d3f9e"/></linearGradient></defs>`;
-  o.v.forEach((v,i)=>{const x=L+bw*i+bw/2-w/2,last=i===n-1,h=T+ph-y(v);
-   s+=`<rect class="bar" style="animation-delay:${i*.1}s" x="${x}" y="${y(v)}" width="${w}" height="${h}" rx="10" fill="url(#${last?"bl":"bg"})" opacity="${last?1:.6}"><title>FY${o.y[i]}: ${fmt(v,o.d)} ${o.u}</title></rect>`;
-   s+=`<text class="vl cu" style="animation-delay:${.35+i*.1}s" x="${x+w/2}" y="${y(v)-9}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0d2440" font-family="Figtree, sans-serif">${fmt(v,o.d)}</text>`;});
- }else{const pts=o.v.map((v,i)=>[L+bw*i+bw/2,y(v)]);
-  s+=`<path d="M${pts.map(p=>p.join(",")).join(" L")} L${pts.at(-1)[0]},${T+ph} L${pts[0][0]},${T+ph}Z" fill="#1d5fe6" opacity=".1" class="ar"/><polyline class="ln" pathLength="1" points="${pts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="#1d5fe6" stroke-width="3" stroke-linejoin="round"/>`;
-  pts.forEach((p,i)=>{const last=i===n-1;s+=`<circle class="dot" style="animation-delay:${.2+i*.25}s" cx="${p[0]}" cy="${p[1]}" r="${last?7:5}" fill="${last?"#c08a34":"#fff"}" stroke="${last?"#fff":"#1d5fe6"}" stroke-width="2.5"><title>FY${o.y[i]}: ${fmt(o.v[i],o.d)} ${o.u}</title></circle><text class="vl cu" style="animation-delay:${.35+i*.25}s" x="${p[0]}" y="${p[1]-14}" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0d2440" font-family="Figtree, sans-serif">${fmt(o.v[i],o.d)}</text>`;});}
- const svg=document.getElementById("chart");svg.innerHTML=s;svg.setAttribute("aria-label",`${o.n} by financial year`);
- if(window.__countUp)svg.querySelectorAll(".cu").forEach(window.__countUp);
+ const cv=document.getElementById("cjs");cv.setAttribute("aria-label",`${o.n}: ${o.labels.map((l,i)=>l+" "+o.series.map(s=>fmt(s.data[i],o.d)).join(" / ")).join(", ")} (${o.u})`);
+ chart=new Chart(cv,buildConfig(o));
 }
-sel.addEventListener("change",()=>{try{localStorage.setItem("as-kpi",sel.value)}catch(e){};draw();});
-document.querySelectorAll("#viewSeg button").forEach(b=>b.addEventListener("click",()=>{view=b.dataset.v;document.querySelectorAll("#viewSeg button").forEach(x=>x.setAttribute("aria-pressed",x===b));draw();}));
+sel.addEventListener("change",()=>{try{localStorage.setItem("as-kpi",sel.value)}catch(e){};view=null;draw();});
+document.getElementById("viewSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;view=b.dataset.v;draw();});
+document.getElementById("valsChk").addEventListener("change",e=>{showVals=e.target.checked;if(chart){chart.options.plugins.valueLabels.show=showVals;chart.update("none");}});
+/* save chart as PNG */
+document.getElementById("pngBtn").addEventListener("click",async()=>{
+ const msg=document.getElementById("pngMsg");
+ if(!chart){msg.textContent="Switch to a chart view to save an image.";return;}
+ const src=chart.canvas,pad=28*2,th=70*2,out=document.createElement("canvas");out.width=src.width+pad*2;out.height=src.height+pad*2+th;
+ const x=out.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,out.width,out.height);
+ x.fillStyle="#0d2440";const tt=document.getElementById("chTitle").textContent;let fs=40;do{x.font=`800 ${fs}px Archivo, Figtree, sans-serif`;fs-=2;}while(x.measureText(tt).width>out.width-pad*2&&fs>18);x.fillText(tt,pad,pad+38);
+ x.fillStyle="#5b6f86";x.font="500 24px Figtree, sans-serif";x.fillText(document.getElementById("chSub").textContent+"  ·  Aitken Spence PLC Annual Report 2025/26",pad,pad+80);
+ x.drawImage(src,pad,pad+th);
+ const blob=await new Promise(r=>out.toBlob(r,"image/png"));
+ const name="aitken-spence-"+sel.value+"-"+(view||"chart")+".png";
+ try{
+  await dlReady;
+  if(!downloadsApi){msg.textContent="Saving images isn't available in this view.";return;}
+  msg.textContent="Saving…";await downloadsApi.save({filename:name,data:blob});msg.textContent="Chart image saved.";
+ }catch(err){msg.textContent=err&&err.code==="declined"?"Save cancelled.":"Couldn't save the image here.";}
+});
 draw();
 
 

@@ -99,20 +99,21 @@
   <section class="s in" id="chart-gen" style="padding-top:0">
     <div class="head">
       <div><div class="eyebrow">Explore the numbers</div><h2 style="margin-top:12px">Chart generator</h2>
-      <p class="lede">Pick a financial or sustainability indicator and view it as bars, a line, or a table.</p></div>
+      <p class="lede">Choose from 36 indicators, breakdowns and comparisons from the report, then switch between bar, line, area, doughnut, pie and more. Hover for exact values and save any chart as an image.</p></div>
     </div>
     <div class="gen">
       <aside>
         <div><label class="lbl" for="kpiSel">Indicator</label><select id="kpiSel"></select></div>
-        <div><span class="lbl">View as</span>
-          <div class="seg" id="viewSeg" role="group" aria-label="Chart type">
-            <button type="button" data-v="bar" aria-pressed="true">Bar</button><button type="button" data-v="line" aria-pressed="false">Line</button><button type="button" data-v="table" aria-pressed="false">Table</button>
-          </div></div>
+        <div><span class="lbl">Chart type</span>
+          <div class="seg" id="viewSeg" role="group" aria-label="Chart type"></div></div>
+        <label class="tog" for="valsChk"><input type="checkbox" id="valsChk" checked> Show values on the chart</label>
+        <button type="button" class="pill pill-line savepng" id="pngBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Save chart as PNG</button>
+        <p class="note" id="pngMsg" role="status"></p>
         <p class="note" id="kpiNote"></p>
       </aside>
       <div class="chartbox">
         <h3 id="chTitle"></h3><p class="sub" id="chSub"></p>
-        <div id="chartWrap"><svg id="chart" viewBox="0 0 720 340" role="img"></svg></div>
+        <div id="chartWrap" class="cjs-wrap"><canvas id="cjs" role="img"></canvas></div>
         <div class="tbl" id="tableWrap" hidden></div>
       </div>
     </div>
@@ -253,7 +254,8 @@
   <div class="foot">Answers draw on the Annual Report 2025/26. Check key figures in the full PDF.</div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/chart.umd.js"></script>
 <script>window.LEO={"mask0": "assets/aria-mask0.webp", "mbox0": [360, 333, 464, 443], "iris0": "assets/aria-iris0.webp", "ibox0": [381, 339, 467, 441], "mask1": "assets/aria-mask1.webp", "mbox1": [676, 346, 789, 449], "iris1": "assets/aria-iris1.webp", "ibox1": [678, 341, 772, 449], "base": ["assets/aria-base-0.webp","assets/aria-base-1.webp","assets/aria-base-2.webp"], "cuts": [0,426,852,1278], "bw": 1230, "bh": 1278, "W": 1230, "H": 1278, "face": "assets/aria-face.webp"};</script>
 <script src="app.js"></script>
 

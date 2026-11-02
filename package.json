@@ -1,0 +1,12 @@
+{
+  "name": "aitken-spence-ar",
+  "private": true,
+  "description": "Aitken Spence Annual Report 2025/26 microsite (static).",
+  "scripts": {
+    "vendor": "mkdir -p vendor && cp node_modules/chart.js/dist/chart.umd.js node_modules/jspdf/dist/jspdf.umd.min.js vendor/"
+  },
+  "devDependencies": {
+    "chart.js": "4.4.1",
+    "jspdf": "2.5.1"
+  }
+}

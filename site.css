@@ -270,6 +270,14 @@ footer .logo{color:#fff;margin-bottom:8px}
 .chat .foot{font-size:.68rem;color:var(--muted);text-align:center;padding:0 12px 10px;background:#fff}
 
 
+.seg{flex-wrap:wrap;border-radius:16px;gap:2px}
+.seg button{flex:1 0 auto;border-radius:12px;padding:7px 10px}
+.cjs-wrap{position:relative;height:360px}
+.tog{display:flex;gap:9px;align-items:center;font-size:.86rem;color:var(--ink);cursor:pointer}
+.tog input{width:16px;height:16px;accent-color:var(--blue)}
+.savepng{justify-content:center;font-weight:600}
+#pngMsg:empty{display:none}
+@media (max-width:760px){.cjs-wrap{height:300px}}
 /* ---------- motion ---------- */
 .progress{position:fixed;top:0;left:0;right:0;height:calc(3px + env(safe-area-inset-top,0px));z-index:60;background:linear-gradient(90deg,var(--blue),var(--brass));transform-origin:0 50%;transform:scaleX(0);pointer-events:none}
 .rv{transition:opacity .7s ease,transform .85s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--i,0)*80ms)}
