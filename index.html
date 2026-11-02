@@ -99,22 +99,50 @@
   <section class="s in" id="chart-gen" style="padding-top:0">
     <div class="head">
       <div><div class="eyebrow">Explore the numbers</div><h2 style="margin-top:12px">Chart generator</h2>
-      <p class="lede">Choose from 36 indicators, breakdowns and comparisons from the report, then switch between bar, line, area, doughnut, pie and more. Hover for exact values and save any chart as an image.</p></div>
+      <p class="lede">Build your own chart. Compare up to four indicators across five years, or explore this year’s breakdowns by sector and source. Hover for exact values, then download the chart as PNG, JPG or PDF, or the data as CSV.</p></div>
     </div>
-    <div class="gen">
-      <aside>
-        <div><label class="lbl" for="kpiSel">Indicator</label><select id="kpiSel"></select></div>
-        <div><span class="lbl">Chart type</span>
-          <div class="seg" id="viewSeg" role="group" aria-label="Chart type"></div></div>
-        <label class="tog" for="valsChk"><input type="checkbox" id="valsChk" checked> Show values on the chart</label>
-        <button type="button" class="pill pill-line savepng" id="pngBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Save chart as PNG</button>
-        <p class="note" id="pngMsg" role="status"></p>
-        <p class="note" id="kpiNote"></p>
-      </aside>
-      <div class="chartbox">
-        <h3 id="chTitle"></h3><p class="sub" id="chSub"></p>
-        <div id="chartWrap" class="cjs-wrap"><canvas id="cjs" role="img"></canvas></div>
-        <div class="tbl" id="tableWrap" hidden></div>
+    <div class="gen2">
+      <div class="gtabs" id="genTabs" role="tablist" aria-label="Chart mode">
+        <button type="button" role="tab" data-tab="trend" aria-selected="true">Five-year trends</button>
+        <button type="button" role="tab" data-tab="mix" aria-selected="false">Breakdowns &amp; comparisons</button>
+      </div>
+      <div class="gbody">
+        <aside class="gpanel">
+          <div id="pTrend">
+            <div class="step"><span class="sn">1</span><div><b>Choose indicators</b><small id="selCount"></small></div></div>
+            <input type="search" id="indSearch" class="isearch" placeholder="Search, e.g. profit, EPS, water" aria-label="Search indicators">
+            <div class="cats" id="catTabs" role="tablist" aria-label="Indicator category"></div>
+            <div class="indlist" id="indList"></div>
+            <div class="chips2" id="selChips"></div>
+            <div class="step"><span class="sn">2</span><div><b>Choose years</b><small>FY2021/22 to FY2025/26</small></div></div>
+            <div class="yrs" id="yrPills"></div>
+            <div class="step"><span class="sn">3</span><div><b>Choose a chart type</b></div></div>
+            <div class="ctypes" id="ctypes"></div>
+          </div>
+          <div id="pMix" hidden>
+            <div class="step"><span class="sn">1</span><div><b>Choose a dataset</b><small>FY2025/26</small></div></div>
+            <select id="mixSel" aria-label="Dataset"></select>
+            <div class="step"><span class="sn">2</span><div><b>Choose a chart type</b></div></div>
+            <div class="ctypes" id="mixTypes"></div>
+          </div>
+          <div class="gfoot">
+            <label class="tog" for="valsChk"><input type="checkbox" id="valsChk" checked> Show values on the chart</label>
+            <button type="button" class="linkbtn2" id="resetBtn">Reset</button>
+          </div>
+        </aside>
+        <div class="chartbox">
+          <div class="cbhead">
+            <div><h3 id="chTitle"></h3><p class="sub" id="chSub"></p></div>
+            <div class="expbar" id="expBar" role="group" aria-label="Download">
+              <button type="button" data-f="png">PNG</button><button type="button" data-f="jpg">JPG</button><button type="button" data-f="pdf">PDF</button><button type="button" data-f="csv">CSV</button>
+            </div>
+          </div>
+          <div class="sumchips" id="sumChips"></div>
+          <div id="chartWrap" class="cjs-wrap"><canvas id="cjs" role="img"></canvas></div>
+          <div class="tbl" id="tableWrap"></div>
+          <p class="note" id="pngMsg" role="status"></p>
+          <p class="note" id="kpiNote"></p>
+        </div>
       </div>
     </div>
   </section>

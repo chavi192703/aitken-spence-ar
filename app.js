@@ -18,34 +18,49 @@ document.getElementById("kpis").innerHTML=K.map(k=>{
 /* ---------- chart generator (Chart.js) ---------- */
 const SECT=["Tourism","Maritime & Freight","Strategic Investments","Services"];
 const PAL=["#1d5fe6","#c08a34","#2c8a7d","#0d2440","#8fb4ff","#c2452f","#18834f","#7a5cff"];
-const FY=y=>"FY"+y;
-const trend=(n,u,y,v,extra)=>Object.assign({kind:"trend",n,u,labels:y.map(FY),series:[{name:n,data:v}]},extra||{});
+const YEARS=["2021/22","2022/23","2023/24","2024/25","2025/26"];
+const _=null;
+/* five-year indicators: values per YEARS, null where the year isn't available */
+const IND=[
+ {k:"rev",c:"perf",n:"Group revenue",u:"Rs. Mn",v:[54696,98104,97486,95095,96591]},
+ {k:"revA",c:"perf",n:"Revenue incl. associates",u:"Rs. Mn",v:[_,107498,109018,112802,122335]},
+ {k:"ebitda",c:"perf",n:"EBITDA",u:"Rs. Mn",v:[23100,30100,24500,25451,26590],note:"EBITDA for FY2021/22 to FY2023/24 is rounded to Rs. 0.1 Bn as published."},
+ {k:"ops",c:"perf",n:"Profit from operations",u:"Rs. Mn",v:[16387,18984,13226,14779,14814]},
+ {k:"pbt",c:"perf",n:"Profit before tax",u:"Rs. Mn",v:[14244,11201,6725,10826,12812]},
+ {k:"taxe",c:"perf",n:"Income tax expense",u:"Rs. Mn",v:[2068,3125,2273,3647,3705]},
+ {k:"pat",c:"perf",n:"Profit after tax",u:"Rs. Mn",v:[12156,8076,4452,7179,9107]},
+ {k:"att",c:"perf",n:"Profit attributable to shareholders",u:"Rs. Mn",v:[_,6644,2928,5331,6796]},
+ {k:"assets",c:"pos",n:"Total assets",u:"Rs. Mn",v:[197346,214338,201257,202027,227618]},
+ {k:"equity",c:"pos",n:"Total equity",u:"Rs. Mn",v:[77446,86216,85720,89889,104253]},
+ {k:"roe",c:"pos",n:"Return on equity",u:"%",d:2,v:[_,9.47,3.95,7.06,8.18]},
+ {k:"roce",c:"pos",n:"Return on capital employed",u:"%",d:2,v:[_,16.49,12.64,14.34,14.54]},
+ {k:"icov",c:"pos",n:"Interest cover",u:"times",d:2,v:[6.04,2.19,1.73,2.82,3.76]},
+ {k:"cr",c:"pos",n:"Current ratio",u:"times",d:2,v:[1.35,1.28,1.19,1.22,1.40]},
+ {k:"de",c:"pos",n:"Debt to equity",u:"times",d:2,v:[0.64,0.54,0.45,0.38,0.35]},
+ {k:"eps",c:"sh",n:"Earnings per share",u:"Rs.",d:2,v:[25.96,16.36,7.21,13.13,16.74]},
+ {k:"dps",c:"sh",n:"Dividend per share",u:"Rs.",d:2,v:[_,4.00,4.25,4.00,4.00]},
+ {k:"navps",c:"sh",n:"Net asset value per share",u:"Rs.",d:2,v:[162.44,183.26,181.86,190.23,218.90]},
+ {k:"mps",c:"sh",n:"Market price per share",u:"Rs.",d:2,v:[_,131.00,130.25,127.75,139.00],note:"FY2024/25 market price is derived from the reported P/E ratio and EPS."},
+ {k:"pe",c:"sh",n:"Price earnings ratio",u:"times",d:2,v:[_,8.01,18.06,9.73,8.30]},
+ {k:"pbv",c:"sh",n:"Price to book value",u:"times",d:2,v:[_,0.71,0.72,0.67,0.63]},
+ {k:"va",c:"eco",n:"Value added by the Group",u:"Rs. Mn",v:[_,46934,41055,44379,48535]},
+ {k:"fx",c:"eco",n:"Foreign exchange facilitated",u:"Rs. Mn",v:[_,81886,130955,163091,113789]},
+ {k:"taxp",c:"eco",n:"Taxes paid to governments",u:"Rs. Mn",v:[_,9369,12245,13594,14842]},
+ {k:"emp",c:"ppl",n:"Employees",u:"people",v:[_,13033,13281,16513,20300]},
+ {k:"fem",c:"ppl",n:"Female representation",u:"%",v:[_,41,39,42,37]},
+ {k:"trn",c:"ppl",n:"Training hours per employee",u:"hours",v:[_,12,14,17,16]},
+ {k:"ghg",c:"ppl",n:"Scope 1 + 2 GHG emissions",u:"tCO₂e",v:[_,_,_,52402,53103],note:"Environmental data is shown for two years because earlier years were reported on a different boundary."},
+ {k:"avoid",c:"ppl",n:"Emissions reduced / offset",u:"tCO₂e",v:[_,_,_,208891,188922]},
+ {k:"energy",c:"ppl",n:"Total energy consumption",u:"GJ",v:[_,_,_,734143,794758]},
+ {k:"renew",c:"ppl",n:"Renewable energy consumed",u:"GJ",v:[_,_,_,215375,257375]},
+ {k:"water",c:"ppl",n:"Water withdrawn",u:"m³",v:[_,_,_,1303811,1245545]},
+ {k:"waste",c:"ppl",n:"Solid waste generated",u:"tonnes",v:[_,_,_,26888,22618]}];
+const CATS=[["all","All"],["perf","Performance"],["pos","Position & ratios"],["sh","Shareholders"],["eco","Economy"],["ppl","People & planet"]];
+const INDK=Object.fromEntries(IND.map(i=>[i.k,i]));
+/* breakdowns and comparisons (single year) */
 const parts=(n,u,labels,v,extra)=>Object.assign({kind:"parts",n,u,labels,series:[{name:"FY2025/26",data:v}]},extra||{});
 const group=(n,u,labels,series,extra)=>Object.assign({kind:"group",n,u,labels,series},extra||{});
-const Y2=["2024/25","2025/26"],Y4=["2021/22","2022/23","2024/25","2025/26"];
 const DS={
- rev:trend("Group revenue","Rs. Mn",Y4,[54696,98104,95095,96591],{note:"FY2023/24 is not shown here; see the Ten Year Summary on p.496 of the full report."}),
- pbt:trend("Profit before tax","Rs. Mn",Y4,[14244,11201,10826,12812],{note:"FY2023/24 is not shown here; see the Ten Year Summary on p.496."}),
- ebitda:trend("EBITDA","Rs. Mn",Y4,[23100,30100,25451,26590],{note:"FY2021/22 and FY2022/23 rounded to Rs. 0.1 Bn as published in results announcements."}),
- pat:trend("Profit after tax","Rs. Mn",Y2,[7179,9107]),
- att:trend("Profit attributable to equity holders","Rs. Mn",Y2,[5331,6796]),
- assets:trend("Total assets","Rs. Mn",Y2,[202027,227618]),
- equity:trend("Total equity","Rs. Mn",Y2,[89889,104253]),
- eps:trend("Earnings per share","Rs.",Y2,[13.13,16.74],{d:2}),
- navps:trend("Net asset value per share","Rs.",Y2,[190.23,218.90],{d:2}),
- roe:trend("Return on equity","%",Y2,[7.06,8.18],{d:2}),
- roce:trend("Return on capital employed","%",Y2,[14.34,14.54],{d:2}),
- tax:trend("Taxes paid to governments","Rs. Mn",Y2,[13594,14842]),
- va:trend("Value added by the Group","Rs. Mn",Y2,[44379,48535]),
- fx:trend("Foreign exchange facilitated","Rs. Mn",Y2,[163091,113789],{note:"Lower money-transfer volumes after a decision to focus on higher-performing lines."}),
- emp:trend("Employees","people",Y2,[16513,20300]),
- female:trend("Female representation","%",Y2,[42,37]),
- ghg:trend("Scope 1 + 2 GHG emissions","tCO₂e",Y2,[52402,53103]),
- avoid:trend("Emissions reduced / offset","tCO₂e",Y2,[208891,188922]),
- energy:trend("Total energy consumption","GJ",Y2,[734143,794758]),
- renew:trend("Renewable energy consumed","GJ",Y2,[215375,257375]),
- water:trend("Water withdrawn","m³",Y2,[1303811,1245545]),
- waste:trend("Solid waste generated","tonnes",Y2,[26888,22618]),
  secPbt:parts("Profit before tax by sector","Rs. Bn",SECT,[7.9,4.7,-0.94,1.2],{d:2,noTotal:true,note:"Strategic Investments made a loss, driven by apparel. Source: Chairperson's Message, pp.41–43."}),
  secFx:parts("Foreign exchange facilitated by sector","Rs. Bn",SECT,[38.9,6.0,6.8,62.1],{d:1,note:"Source: Facilitation of Foreign Exchange Generation, p.23."}),
  secEmp:parts("Employees by sector","people",SECT,[3978,1966,7754,6602],{note:"Source: Consolidated ESG Performance, p.20."}),
@@ -59,127 +74,192 @@ const DS={
  geo:group("Sri Lanka vs overseas","%",["Revenue","Profit before tax","Total assets"],[{name:"Sri Lanka",data:[52.7,38.6,54.6]},{name:"Overseas",data:[47.3,61.4,45.4]}],{d:1,stack:true,note:"Source: About Us p.13 and Chairperson's Message p.41."}),
  workforce:group("Permanent and contract staff by sector","people",SECT,[{name:"Permanent",data:[2170,1069,7541,198]},{name:"Contract",data:[1808,897,213,6404]}],{stack:true,note:"Source: Consolidated ESG Performance, p.20."}),
  valueYoy:group("Value distributed, two years","Rs. Mn",["Employees","Retained","Lenders","Governments","Shareholders"],[{name:"FY2024/25",data:[17296,11607,8858,4994,1624]},{name:"FY2025/26",data:[19561,13082,8012,6257,1624]}],{note:"Source: Value Creation and Distribution, p.22."}),
- taxYoy:group("Taxes paid by type, two years","Rs. Mn",["VAT","SSCL","Stamp duty & TDL","Sales tax (overseas)","Green tax","Income & dividend tax"],[{name:"FY2024/25",data:[3583,467,177,4690,1051,3627]},{name:"FY2025/26",data:[3185,524,194,5283,1529,4126]}],{note:"Source: p.24."})
-};
-const DSGROUPS=[
- ["Financial trends",["rev","pbt","ebitda","pat","att","assets","equity","eps","navps","roe","roce"]],
- ["Economic contribution",["tax","va","fx"]],
- ["Sustainability trends",["emp","female","ghg","avoid","energy","renew","water","waste"]],
- ["Breakdowns",["secPbt","secFx","secEmp","secGhg","secEnergy","secWater","valueDist","energyMix","taxes"]],
- ["Comparisons",["yoy","geo","workforce","valueYoy","taxYoy"]]];
-const TYPES={
- trend:[["bar","Bar"],["line","Line"],["area","Area"],["table","Table"]],
- parts:[["doughnut","Doughnut"],["pie","Pie"],["bar","Bar"],["hbar","Rows"],["polar","Polar"],["table","Table"]],
- group:[["bar","Bars"],["stacked","Stacked"],["hbar","Rows"],["line","Line"],["table","Table"]]};
-const sel=document.getElementById("kpiSel");
-sel.innerHTML=DSGROUPS.map(g=>`<optgroup label="${g[0]}">${g[1].map(k=>`<option value="${k}">${DS[k].n}</option>`).join("")}</optgroup>`).join("");
-let view=null,showVals=true,chart=null;
-try{const s=localStorage.getItem("as-kpi");if(s&&DS[s])sel.value=s;}catch(e){}
-const fmt=(v,d)=>Number(v).toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:d==null?0:d});
+ taxYoy:group("Taxes paid by type, two years","Rs. Mn",["VAT","SSCL","Stamp duty & TDL","Sales tax (overseas)","Green tax","Income & dividend tax"],[{name:"FY2024/25",data:[3583,467,177,4690,1051,3627]},{name:"FY2025/26",data:[3185,524,194,5283,1529,4126]}],{note:"Source: p.24."})};
+const DSGROUPS=[["Breakdowns, FY2025/26",["secPbt","secFx","secEmp","secGhg","secEnergy","secWater","valueDist","energyMix","taxes"]],["Comparisons",["yoy","geo","workforce","valueYoy","taxYoy"]]];
+const ICON={
+ bar:'<path d="M5 20V11M10 20V5M15 20v-7M20 20V8"/>',line:'<path d="M3 17l5-6 4 3 8-9"/><circle cx="8" cy="11" r="1.2"/><circle cx="12" cy="14" r="1.2"/>',
+ area:'<path d="M3 19l5-7 4 3 8-9v13z" fill="currentColor" fill-opacity=".25"/><path d="M3 19l5-7 4 3 8-9"/>',combo:'<path d="M5 20v-6M11 20v-9M17 20v-5"/><path d="M3 9l6-3 6 3 6-4"/>',
+ stacked:'<path d="M6 20v-5h4v5M6 15V9h4v6M14 20v-8h4v8M14 12V6h4v6"/>',hbar:'<path d="M4 5h9M4 10h15M4 15h6M4 20h12"/>',
+ radar:'<path d="M12 3l8 6-3 10H7L4 9z"/><path d="M12 8l4 3-1.5 5h-5L8 11z" fill="currentColor" fill-opacity=".25"/>',
+ doughnut:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 4v4.5"/>',pie:'<circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 5"/>',
+ polar:'<path d="M12 12L12 3a9 9 0 0 1 8 5z" fill="currentColor" fill-opacity=".25"/><path d="M12 12l-7 5a7 7 0 0 1 0-10z"/><path d="M12 12h6a6 6 0 0 1-3 5z"/>',table:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M9 10v9M15 10v9"/>'};
+const TT=[["bar","Bar"],["line","Line"],["area","Area"],["combo","Bar + line"],["stacked","Stacked"],["hbar","Rows"],["radar","Radar"],["table","Table"]];
+const MIXTYPES={parts:[["doughnut","Doughnut"],["pie","Pie"],["bar","Bar"],["hbar","Rows"],["polar","Polar"],["table","Table"]],group:[["bar","Bars"],["stacked","Stacked"],["hbar","Rows"],["line","Line"],["table","Table"]]};
+const fmt=(v,d)=>v==null?"–":Number(v).toLocaleString("en-US",{minimumFractionDigits:0,maximumFractionDigits:d==null?0:d});
 const reduceMotion=matchMedia("(prefers-reduced-motion: reduce)").matches;
-const hasNeg=o=>o.series.some(s=>s.data.some(v=>v<0));
-function typeList(o){return TYPES[o.kind].filter(t=>!(hasNeg(o)&&["doughnut","pie","polar"].includes(t[0])));}
-function renderTypes(o){
- const list=typeList(o);if(!view||!list.some(t=>t[0]===view))view=o.kind==="trend"?"bar":o.kind==="parts"?(hasNeg(o)?"bar":"doughnut"):(o.stack?"stacked":"bar");
- document.getElementById("viewSeg").innerHTML=list.map(t=>`<button type="button" data-v="${t[0]}" aria-pressed="${t[0]===view}">${t[1]}</button>`).join("");
-}
-if(window.Chart){
- Chart.defaults.font.family='Figtree, system-ui, -apple-system, "Segoe UI", sans-serif';
- Chart.defaults.color="#5b6f86";Chart.defaults.font.size=12;
-}
-/* value labels drawn on top of the marks */
+let tab="trend",chart=null,showVals=true;
+let T={sel:["rev","pbt"],years:YEARS.slice(),type:"combo",cat:"all",q:""};
+let M={key:"secPbt",type:null};
+try{const s=JSON.parse(localStorage.getItem("as-gen2")||"null");if(s&&s.T&&Array.isArray(s.T.sel)){T=Object.assign(T,s.T);T.sel=T.sel.filter(k=>INDK[k]);if(!T.sel.length)T.sel=["rev"];}if(s&&s.M&&DS[s.M.key])M=s.M;if(s&&s.tab)tab=s.tab;}catch(e){}
+const save=()=>{try{localStorage.setItem("as-gen2",JSON.stringify({T,M,tab}))}catch(e){}};
+if(window.Chart){Chart.defaults.font.family='Figtree, system-ui, -apple-system, "Segoe UI", sans-serif';Chart.defaults.color="#5b6f86";Chart.defaults.font.size=12;}
+const $=id=>document.getElementById(id);
+/* ---- value labels + doughnut centre ---- */
 const valuePlugin={id:"valueLabels",afterDatasetsDraw(c,args,opts){
- if(!opts.show)return;const {ctx}=c,o=opts.spec,isArc=["doughnut","pie","polarArea"].includes(c.config.type);
- const total=isArc?c.data.datasets[0].data.reduce((a,b)=>a+Math.abs(b),0):0;
- ctx.save();ctx.font='700 12px Figtree, system-ui, sans-serif';
- c.data.datasets.forEach((ds,di)=>{const meta=c.getDatasetMeta(di);if(meta.hidden)return;
-  meta.data.forEach((el,i)=>{const v=ds.data[i];if(v==null)return;let x,y,txt=fmt(v,o.d);
+ if(!opts.show)return;const {ctx}=c,type=c.config.type,isArc=["doughnut","pie","polarArea"].includes(type);if(type==="radar")return;
+ const stacked=!!(c.options.scales&&((c.options.scales.x||{}).stacked||(c.options.scales.y||{}).stacked));
+ const total=isArc?c.data.datasets[0].data.reduce((a,b)=>a+Math.abs(b||0),0):0;const many=c.data.datasets.length>2&&!isArc;
+ ctx.save();ctx.font=`700 ${many?10:12}px Figtree, system-ui, sans-serif`;
+ c.data.datasets.forEach((ds,di)=>{const meta=c.getDatasetMeta(di);if(meta.hidden||!c.isDatasetVisible(di))return;const d=ds._d;
+  meta.data.forEach((el,i)=>{const v=ds.data[i];if(v==null)return;let x,y,txt=fmt(v,d);
    if(isArc){const share=v/total*100;if(share<4)return;const p=el.tooltipPosition();x=p.x;y=p.y;txt=share.toFixed(share<10?1:0)+"%";ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";}
-   else if(c.options.indexAxis==="y"){if(o.stack&&view==="stacked")return;x=el.x+(v<0?-6:6);y=el.y;ctx.textAlign=v<0?"right":"left";ctx.textBaseline="middle";ctx.fillStyle="#0d2440";}
-   else{if(view==="stacked"){const h=Math.abs(el.base-el.y);if(h<16)return;x=el.x;y=(el.y+el.base)/2;ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";}
-    else{x=el.x;y=v<0?el.y+8:el.y-8;ctx.textAlign="center";ctx.textBaseline=v<0?"top":"bottom";ctx.fillStyle="#0d2440";}}
-   ctx.globalAlpha=Math.min(1,(c._valAlpha??1));ctx.fillText(txt,x,y);});});
+   else if(c.options.indexAxis==="y"){if(stacked)return;x=el.x+(v<0?-6:6);y=el.y;ctx.textAlign=v<0?"right":"left";ctx.textBaseline="middle";ctx.fillStyle="#0d2440";}
+   else if(stacked&&meta.type==="bar"){const h=Math.abs(el.base-el.y);if(h<16)return;x=el.x;y=(el.y+el.base)/2;ctx.fillStyle="#fff";ctx.textAlign="center";ctx.textBaseline="middle";}
+   else{x=el.x;y=v<0?el.y+8:el.y-(meta.type==="line"?11:7);ctx.textAlign="center";ctx.textBaseline=v<0?"top":"bottom";ctx.fillStyle=meta.type==="line"?ds.borderColor:"#0d2440";}
+   ctx.fillText(txt,x,y);});});
  ctx.restore();}};
-/* doughnut centre total */
 const centrePlugin={id:"centreText",afterDraw(c,args,opts){if(c.config.type!=="doughnut"||!opts.text)return;const {ctx,chartArea:a}=c;const x=(a.left+a.right)/2,y=(a.top+a.bottom)/2;
  ctx.save();ctx.textAlign="center";ctx.fillStyle="#5b6f86";ctx.font='500 11px "IBM Plex Mono", monospace';ctx.fillText(opts.label,x,y-14);ctx.fillStyle="#0d2440";ctx.font='800 22px Archivo, Figtree, sans-serif';ctx.fillText(opts.text,x,y+12);ctx.restore();}};
-function gradient(c,top,bottom){const a=c.chartArea;if(!a)return top;const g=c.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,top);g.addColorStop(1,bottom);return g;}
-function buildConfig(o){
- const t=view,labels=o.labels;let type,datasets,extra={};
- const delay=ctx=>ctx.type==="data"&&ctx.mode==="default"?ctx.dataIndex*110+ctx.datasetIndex*60:0;
- if(o.kind==="trend"){const data=o.series[0].data,last=data.length-1;
-  if(t==="bar"){type="bar";datasets=[{label:o.n,data,borderRadius:10,borderSkipped:false,maxBarThickness:84,
-   backgroundColor:ctx=>ctx.dataIndex===last?gradient(ctx.chart,"#2f6ff0","#0d3f9e"):gradient(ctx.chart,"#a9c6fb","#5b93f4")}];}
-  else{type="line";datasets=[{label:o.n,data,borderColor:"#1d5fe6",borderWidth:3,tension:.35,fill:t==="area",
-   backgroundColor:ctx=>gradient(ctx.chart,"rgba(29,95,230,.35)","rgba(29,95,230,0)"),
-   pointRadius:ctx=>ctx.dataIndex===last?7:5,pointHoverRadius:9,pointBackgroundColor:ctx=>ctx.dataIndex===last?"#c08a34":"#fff",pointBorderColor:ctx=>ctx.dataIndex===last?"#fff":"#1d5fe6",pointBorderWidth:2.5}];}
- }else if(o.kind==="parts"){const data=o.series[0].data;
-  if(["doughnut","pie","polar"].includes(t)){type=t==="polar"?"polarArea":t;
-   datasets=[{label:o.n,data,backgroundColor:t==="polar"?PAL.map(c=>c+"cc"):PAL,borderColor:"#fff",borderWidth:3,hoverOffset:14}];
-   if(t==="doughnut")extra.cutout="62%";}
-  else{type="bar";datasets=[{label:o.n,data,borderRadius:8,borderSkipped:false,maxBarThickness:70,backgroundColor:data.map((v,i)=>v<0?"#c2452f":PAL[i%PAL.length])}];
-   if(t==="hbar")extra.indexAxis="y";}
- }else{
-  type=t==="line"?"line":"bar";
-  datasets=o.series.map((s,i)=>({label:s.name,data:s.data,backgroundColor:i===o.series.length-1&&o.series.length===2&&!o.stack?"#1d5fe6":(o.series.length===2&&!o.stack?"#a9c6fb":PAL[i]),
-   borderColor:type==="line"?PAL[i]:undefined,borderWidth:type==="line"?3:0,tension:.3,pointRadius:5,pointBackgroundColor:"#fff",pointBorderColor:PAL[i],pointBorderWidth:2.5,
-   borderRadius:t==="stacked"?0:7,maxBarThickness:56}));
-  if(t==="hbar")extra.indexAxis="y";
- }
- const isArc=["doughnut","pie","polarArea"].includes(type),stacked=t==="stacked",horiz=extra.indexAxis==="y";
- const total=o.total??o.series[0].data.reduce((a,b)=>a+b,0);
- const valueAxis={beginAtZero:true,stacked,grid:{color:"#e7edf5",drawTicks:false},border:{display:false},ticks:{padding:8,callback:v=>fmt(v,o.d&&Math.abs(v)<10?o.d:0)}};
- const catAxis={stacked,grid:{display:false},border:{color:"#dbe4ef"},ticks:{padding:6,font:{weight:"600"}}};
- return{type,data:{labels,datasets},plugins:[valuePlugin,centrePlugin],options:Object.assign({
-  responsive:true,maintainAspectRatio:false,layout:{padding:{top:isArc?6:26,right:horiz?48:8}},
-  animation:reduceMotion?false:{duration:1000,easing:"easeOutQuart",delay},
-  animations:reduceMotion?{}:(type==="line"?{y:{from:ctx=>ctx.chart.scales.y?ctx.chart.scales.y.getPixelForValue(0):0,duration:900,delay}}:{}),
-  interaction:{mode:isArc?"nearest":"index",intersect:isArc},
-  plugins:{legend:{display:isArc||o.series.length>1,position:isArc?"right":"top",align:isArc?"center":"end",labels:{usePointStyle:true,pointStyle:"circle",boxWidth:8,padding:14,font:{weight:"600"}}},
-   tooltip:{backgroundColor:"#0d2440",padding:12,cornerRadius:10,titleFont:{weight:"700"},callbacks:{label:ctx=>{const v=ctx.raw;let s=` ${ctx.dataset.label&&!isArc?ctx.dataset.label+": ":""}${fmt(v,o.d)} ${o.u}`;if(isArc)s=` ${ctx.label}: ${fmt(v,o.d)} ${o.u} (${(v/total*100).toFixed(1)}%)`;return s;}}},
-   valueLabels:{show:showVals,spec:o},
-   centreText:{text:type==="doughnut"?(o.u==="%"?"100%":fmt(total,o.d)):"",label:o.u==="%"?"TOTAL":"TOTAL · "+o.u.toUpperCase()}},
-  scales:isArc?(type==="polarArea"?{r:{ticks:{display:false},grid:{color:"#e7edf5"}}}:{}):(horiz?{x:valueAxis,y:catAxis}:{x:catAxis,y:valueAxis})},extra)};
+const delay=ctx=>ctx.type==="data"&&ctx.mode==="default"?ctx.dataIndex*110+ctx.datasetIndex*70:0;
+const anim=()=>reduceMotion?false:{duration:1000,easing:"easeOutQuart",delay};
+const tooltipBase={backgroundColor:"#0d2440",padding:12,cornerRadius:10,titleFont:{weight:"700"},boxPadding:4};
+const legendBase={labels:{usePointStyle:true,pointStyle:"circle",boxWidth:8,padding:14,font:{weight:"600"}}};
+function vAxis(extra){return Object.assign({beginAtZero:true,grid:{color:"#e7edf5",drawTicks:false},border:{display:false},ticks:{padding:8}},extra||{});}
+const cAxis=extra=>Object.assign({grid:{display:false},border:{color:"#dbe4ef"},ticks:{padding:6,font:{weight:"600"}}},extra||{});
+const hexA=(h,a)=>h+Math.round(a*255).toString(16).padStart(2,"0");
+
+/* ---- trend builder UI ---- */
+function unitsOf(keys){return [...new Set(keys.map(k=>INDK[k].u))];}
+function renderTrendUI(){
+ $("catTabs").innerHTML=CATS.map(c=>`<button type="button" role="tab" aria-selected="${T.cat===c[0]}" data-c="${c[0]}">${c[1]}</button>`).join("");
+ const q=T.q.trim().toLowerCase(),units=unitsOf(T.sel);
+ const list=IND.filter(i=>(T.cat==="all"||i.c===T.cat)&&(!q||i.n.toLowerCase().includes(q)));
+ $("indList").innerHTML=list.length?list.map(i=>{const on=T.sel.includes(i.k),block=!on&&(T.sel.length>=4||(units.length>=2&&!units.includes(i.u)));
+  return `<label class="ind${on?" on":""}${block?" off":""}" title="${block?(T.sel.length>=4?"You can compare up to 4 indicators":"You can mix up to two units at once"):i.n}"><input type="checkbox" data-k="${i.k}" ${on?"checked":""} ${block?"disabled":""}><span>${i.n}</span><em>${i.u}</em></label>`;}).join(""):`<p class="note">No indicators match “${T.q.replace(/</g,"&lt;")}”.</p>`;
+ $("selChips").innerHTML=T.sel.map((k,i)=>`<span class="chip2" style="--c:${PAL[i]}">${INDK[k].n}<button type="button" data-rm="${k}" aria-label="Remove ${INDK[k].n}">×</button></span>`).join("");
+ $("selCount").textContent=`${T.sel.length} of 4 selected`;
+ $("yrPills").innerHTML=YEARS.map(y=>`<button type="button" class="yr" aria-pressed="${T.years.includes(y)}" data-y="${y}">FY${y.slice(2)}</button>`).join("")+`<button type="button" class="yr all" data-y="all">All years</button>`;
+ const sameUnit=units.length===1;
+ const allowed={stacked:sameUnit&&T.sel.length>1,hbar:sameUnit,combo:T.sel.length>1,radar:T.sel.length>=1&&T.years.length>=3};
+ if(allowed[T.type]===false)T.type="bar";
+ $("ctypes").innerHTML=TT.map(t=>{const dis=allowed[t[0]]===false;return `<button type="button" class="ct2" data-t="${t[0]}" aria-pressed="${T.type===t[0]}" ${dis?"disabled":""} title="${dis?(t[0]==="combo"?"Pick two or more indicators":t[0]==="radar"?"Pick at least three years":"Pick indicators with the same unit"):t[1]}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[t[0]]}</svg><span>${t[1]}</span></button>`;}).join("");
 }
+function trendConfig(){
+ const yrs=YEARS.filter(y=>T.years.includes(y)),idx=yrs.map(y=>YEARS.indexOf(y)),labels=yrs.map(y=>"FY"+y);
+ const units=unitsOf(T.sel),two=units.length===2,t=T.type;
+ const datasets=T.sel.map((k,i)=>{const ind=INDK[k],col=PAL[i],data=idx.map(j=>ind.v[j]);
+  const asLine=t==="line"||t==="area"||t==="radar"||(t==="combo"&&i>0);
+  const ds={label:ind.n+(two?` (${ind.u})`:""),data,_d:ind.d,_u:ind.u,borderColor:col,yAxisID:t==="radar"||t==="hbar"?undefined:(two&&ind.u===units[1]?"y1":"y"),spanGaps:true};
+  if(asLine)Object.assign(ds,{type:t==="combo"?"line":undefined,borderWidth:3,tension:.3,cubicInterpolationMode:"monotone",fill:t==="area"?"origin":t==="radar",backgroundColor:t==="radar"?hexA(col,.15):(ctx=>{const a=ctx.chart.chartArea;if(!a)return hexA(col,.2);const g=ctx.chart.ctx.createLinearGradient(0,a.top,0,a.bottom);g.addColorStop(0,hexA(col,.35));g.addColorStop(1,hexA(col,0));return g;}),
+   pointRadius:5,pointHoverRadius:8,pointBackgroundColor:"#fff",pointBorderColor:col,pointBorderWidth:2.5,order:0});
+  else Object.assign(ds,{backgroundColor:T.sel.length===1?data.map((_,j)=>j===data.length-1?"#0d3f9e":"#7fa9f6"):col,borderRadius:t==="stacked"?0:8,borderSkipped:false,maxBarThickness:T.sel.length===1?84:46,order:1});
+  return ds;});
+ const type=t==="line"||t==="area"?"line":t==="radar"?"radar":"bar";
+ const tickCb=u=>v=>fmt(v,["Rs.","%","times"].includes(u)&&Math.abs(v)<100?1:0);
+ let scales;
+ if(type==="radar")scales={r:{beginAtZero:true,grid:{color:"#e7edf5"},angleLines:{color:"#e7edf5"},pointLabels:{font:{weight:"600"}},ticks:{display:false}}};
+ else if(t==="hbar")scales={x:vAxis({ticks:{padding:8,callback:tickCb(units[0])},title:{display:true,text:units[0]}}),y:cAxis()};
+ else{scales={x:cAxis({stacked:t==="stacked"}),y:vAxis({stacked:t==="stacked",ticks:{padding:8,callback:tickCb(units[0])},title:{display:true,text:units[0],color:"#5b6f86",font:{weight:"600"}}})};
+  if(two)scales.y1=vAxis({position:"right",grid:{display:false},ticks:{padding:8,callback:tickCb(units[1])},title:{display:true,text:units[1],color:"#5b6f86",font:{weight:"600"}}});}
+ return{type,data:{labels,datasets},plugins:[valuePlugin],options:{responsive:true,maintainAspectRatio:false,indexAxis:t==="hbar"?"y":"x",layout:{padding:{top:20,right:t==="hbar"?56:8}},
+  animation:anim(),interaction:{mode:"index",intersect:false},scales,
+  plugins:{legend:Object.assign({display:true,position:"top",align:"end"},legendBase),valueLabels:{show:showVals&&(T.sel.length<=2||t==="stacked")},
+   tooltip:Object.assign({},tooltipBase,{callbacks:{label:ctx=>` ${INDK[T.sel[ctx.datasetIndex]].n}: ${fmt(ctx.raw,ctx.dataset._d)} ${ctx.dataset._u}`}})}}};
+}
+function trendSummary(){
+ const yrs=YEARS.filter(y=>T.years.includes(y)),idx=yrs.map(y=>YEARS.indexOf(y));
+ $("sumChips").innerHTML=T.sel.map((k,i)=>{const ind=INDK[k],pts=idx.map(j=>[YEARS[j],ind.v[j]]).filter(p=>p[1]!=null);if(!pts.length)return"";
+  const [ly,lv]=pts.at(-1),prev=pts.at(-2);let chg="",cagr="";
+  if(prev){const c=(lv-prev[1])/Math.abs(prev[1])*100;chg=`<span class="${c>=0?"up":"dn"} chip">${c>=0?"▲":"▼"} ${Math.abs(c).toFixed(1)}% vs FY${prev[0].slice(2)}</span>`;}
+  if(pts.length>=3&&pts[0][1]>0&&lv>0){const n=YEARS.indexOf(ly)-YEARS.indexOf(pts[0][0]);const g=(Math.pow(lv/pts[0][1],1/n)-1)*100;cagr=`<small>${n}-yr CAGR ${g>=0?"+":""}${g.toFixed(1)}%</small>`;}
+  return `<div class="sum" style="--c:${PAL[i]}"><span class="l">${ind.n}</span><b>${fmt(lv,ind.d)} <i>${ind.u}</i></b><span class="row2">${chg}${cagr}</span><span class="l">FY${ly}</span></div>`;}).join("");
+ const head=["Indicator","Unit",...yrs.map(y=>"FY"+y)];
+ $("tableWrap").innerHTML=`<table><thead><tr>${head.map((h,i)=>`<th class="${i>1?"r":""}">${h}</th>`).join("")}</tr></thead><tbody>${T.sel.map((k,i)=>{const ind=INDK[k];return `<tr><td><span class="dot2" style="background:${PAL[i]}"></span>${ind.n}</td><td>${ind.u}</td>${idx.map(j=>`<td class="r">${fmt(ind.v[j],ind.d)}</td>`).join("")}</tr>`;}).join("")}</tbody></table>`;
+}
+/* ---- breakdown builder ---- */
+const hasNeg=o=>o.series.some(s=>s.data.some(v=>v<0));
+function mixTypes(o){return MIXTYPES[o.kind].filter(t=>!(hasNeg(o)&&["doughnut","pie","polar"].includes(t[0])));}
+function renderMixUI(){
+ const o=DS[M.key],list=mixTypes(o);if(!M.type||!list.some(t=>t[0]===M.type))M.type=o.kind==="parts"?(hasNeg(o)?"bar":"doughnut"):(o.stack?"stacked":"bar");
+ $("mixSel").value=M.key;
+ $("mixTypes").innerHTML=list.map(t=>`<button type="button" class="ct2" data-t="${t[0]}" aria-pressed="${M.type===t[0]}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[t[0]]||ICON.bar}</svg><span>${t[1]}</span></button>`).join("");
+}
+function mixConfig(o){
+ const t=M.type,labels=o.labels;let type,datasets,extra={};
+ if(o.kind==="parts"){const data=o.series[0].data;
+  if(["doughnut","pie","polar"].includes(t)){type=t==="polar"?"polarArea":t;datasets=[{label:o.n,data,_d:o.d,_u:o.u,backgroundColor:t==="polar"?PAL.map(c=>hexA(c,.8)):PAL,borderColor:"#fff",borderWidth:3,hoverOffset:14}];if(t==="doughnut")extra.cutout="62%";}
+  else{type="bar";datasets=[{label:o.n,data,_d:o.d,_u:o.u,borderRadius:8,borderSkipped:false,maxBarThickness:70,backgroundColor:data.map((v,i)=>v<0?"#c2452f":PAL[i%PAL.length])}];if(t==="hbar")extra.indexAxis="y";}
+ }else{type=t==="line"?"line":"bar";const two=o.series.length===2&&!o.stack;
+  datasets=o.series.map((s,i)=>({label:s.name,data:s.data,_d:o.d,_u:o.u,backgroundColor:two?(i?"#1d5fe6":"#a9c6fb"):PAL[i],borderColor:PAL[i],borderWidth:type==="line"?3:0,tension:.3,pointRadius:5,pointBackgroundColor:"#fff",pointBorderColor:PAL[i],pointBorderWidth:2.5,borderRadius:t==="stacked"?0:7,maxBarThickness:56}));
+  if(t==="hbar")extra.indexAxis="y";}
+ const isArc=["doughnut","pie","polarArea"].includes(type),stacked=t==="stacked",horiz=extra.indexAxis==="y",total=o.total??o.series[0].data.reduce((a,b)=>a+b,0);
+ const va=vAxis({stacked,ticks:{padding:8,callback:v=>fmt(v,o.d&&Math.abs(v)<10?o.d:0)}}),ca=cAxis({stacked});
+ return{type,data:{labels,datasets},plugins:[valuePlugin,centrePlugin],options:Object.assign({responsive:true,maintainAspectRatio:false,layout:{padding:{top:isArc?6:26,right:horiz?52:8}},
+  animation:anim(),interaction:{mode:isArc?"nearest":"index",intersect:isArc},
+  plugins:{legend:Object.assign({display:isArc||o.series.length>1,position:isArc?"right":"top",align:isArc?"center":"end"},legendBase),
+   tooltip:Object.assign({},tooltipBase,{callbacks:{label:ctx=>isArc?` ${ctx.label}: ${fmt(ctx.raw,o.d)} ${o.u} (${(ctx.raw/total*100).toFixed(1)}%)`:` ${o.series.length>1?ctx.dataset.label+": ":""}${fmt(ctx.raw,o.d)} ${o.u}`}}),
+   valueLabels:{show:showVals},centreText:{text:type==="doughnut"?(o.u==="%"?"100%":fmt(total,o.d)):"",label:o.u==="%"?"TOTAL":"TOTAL · "+o.u.toUpperCase()}},
+  scales:isArc?(type==="polarArea"?{r:{ticks:{display:false},grid:{color:"#e7edf5"}}}:{}):(horiz?{x:va,y:ca}:{x:ca,y:va})},extra)};
+}
+function mixTable(o){
+ const head=[o.kind==="parts"?"Item":"",...o.series.map(s=>s.name+(o.kind==="parts"?` (${o.u})`:""))];
+ $("tableWrap").innerHTML=`<table><thead><tr>${head.map((h,i)=>`<th class="${i?"r":""}">${h}</th>`).join("")}</tr></thead><tbody>${o.labels.map((l,i)=>`<tr><td>${l}</td>${o.series.map(s=>`<td class="r">${fmt(s.data[i],o.d)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+ $("sumChips").innerHTML="";
+}
+/* ---- render ---- */
 function draw(){
- const o=DS[sel.value];renderTypes(o);
- document.getElementById("chTitle").textContent=o.n+(o.kind==="parts"?" (FY2025/26)":o.kind==="group"&&o.series[0].name.startsWith("FY")?" ("+o.series.map(s=>s.name).join(" vs ")+")":"");
- if(o.kind==="trend"){const v=o.series[0].data,ch=(v.at(-1)-v.at(-2))/v.at(-2)*100;document.getElementById("chSub").textContent=`${o.u} · ${o.labels.at(-1)}: ${fmt(v.at(-1),o.d)} (${ch>=0?"+":""}${ch.toFixed(1)}% vs prior year)`;}
- else{const t=o.total??o.series.at(-1).data.reduce((a,b)=>a+b,0);document.getElementById("chSub").textContent=o.kind==="parts"&&o.u!=="%"&&!o.noTotal?`${o.u} · Total ${fmt(t,o.d)}`:(o.u==="%"?"Share, %":o.u);}
- document.getElementById("kpiNote").textContent=o.note||"Source: Annual Report 2025/26, pp.14–21.";
- const cw=document.getElementById("chartWrap"),tw=document.getElementById("tableWrap");
+ document.querySelectorAll("#genTabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===tab));
+ $("pTrend").hidden=tab!=="trend";$("pMix").hidden=tab!=="mix";
  if(chart){chart.destroy();chart=null;}
- if(view==="table"||!window.Chart){cw.hidden=true;tw.hidden=false;
-  const head=o.kind==="trend"?["Financial year",o.u,"Change"]:[o.kind==="parts"?"Item":"",...o.series.map(s=>s.name+(o.kind==="parts"?" ("+o.u+")":""))];
-  let rows;
-  if(o.kind==="trend")rows=o.labels.map((l,i)=>{const v=o.series[0].data,c=i?(v[i]-v[i-1])/Math.abs(v[i-1])*100:null;return[l,fmt(v[i],o.d),c===null?"—":(c>=0?"+":"")+c.toFixed(1)+"%"];});
-  else rows=o.labels.map((l,i)=>[l,...o.series.map(s=>fmt(s.data[i],o.d))]);
-  tw.innerHTML=`<table><thead><tr>${head.map((h,i)=>`<th class="${i?"r":""}">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td class="${i?"r":""}">${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-  if(!window.Chart&&view!=="table")document.getElementById("kpiNote").textContent="The chart library didn't load, so the data is shown as a table.";
-  return;}
- cw.hidden=false;tw.hidden=true;
- const cv=document.getElementById("cjs");cv.setAttribute("aria-label",`${o.n}: ${o.labels.map((l,i)=>l+" "+o.series.map(s=>fmt(s.data[i],o.d)).join(" / ")).join(", ")} (${o.u})`);
- chart=new Chart(cv,buildConfig(o));
+ let cfg,isTable,title,sub,note;
+ if(tab==="trend"){
+  renderTrendUI();const yrs=YEARS.filter(y=>T.years.includes(y));
+  title=T.sel.map(k=>INDK[k].n).join(" vs ");sub=`FY${yrs[0]} to FY${yrs.at(-1)} · ${unitsOf(T.sel).join(" and ")}`;
+  note=T.sel.map(k=>INDK[k].note).filter(Boolean).join(" ")||"Source: Aitken Spence PLC annual reports, FY2021/22 to FY2025/26.";
+  isTable=T.type==="table";trendSummary();if(!isTable)cfg=trendConfig();
+ }else{
+  renderMixUI();const o=DS[M.key];title=o.n+(o.kind==="parts"?" (FY2025/26)":o.series[0].name.startsWith("FY")?` (${o.series.map(s=>s.name).join(" vs ")})`:"");
+  const tot=o.total??o.series.at(-1).data.reduce((a,b)=>a+b,0);sub=o.kind==="parts"&&o.u!=="%"&&!o.noTotal?`${o.u} · Total ${fmt(tot,o.d)}`:(o.u==="%"?"Share, %":o.u);
+  note=o.note;isTable=M.type==="table";mixTable(o);if(!isTable)cfg=mixConfig(o);
+ }
+ $("chTitle").textContent=title;$("chSub").textContent=sub;$("kpiNote").textContent=note;
+ const cw=$("chartWrap");
+ if(isTable||!window.Chart){cw.hidden=true;$("tableWrap").classList.add("solo");if(!window.Chart&&!isTable)$("kpiNote").textContent="The chart library didn't load, so the data is shown as a table.";save();return;}
+ cw.hidden=false;$("tableWrap").classList.remove("solo");
+ $("cjs").setAttribute("aria-label",title+". "+sub+". The data is listed in the table below the chart.");
+ chart=new Chart($("cjs"),cfg);save();
 }
-sel.addEventListener("change",()=>{try{localStorage.setItem("as-kpi",sel.value)}catch(e){};view=null;draw();});
-document.getElementById("viewSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;view=b.dataset.v;draw();});
-document.getElementById("valsChk").addEventListener("change",e=>{showVals=e.target.checked;if(chart){chart.options.plugins.valueLabels.show=showVals;chart.update("none");}});
-/* save chart as PNG */
-document.getElementById("pngBtn").addEventListener("click",async()=>{
- const msg=document.getElementById("pngMsg");
- if(!chart){msg.textContent="Switch to a chart view to save an image.";return;}
- const src=chart.canvas,pad=28*2,th=70*2,out=document.createElement("canvas");out.width=src.width+pad*2;out.height=src.height+pad*2+th;
- const x=out.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,out.width,out.height);
- x.fillStyle="#0d2440";const tt=document.getElementById("chTitle").textContent;let fs=40;do{x.font=`800 ${fs}px Archivo, Figtree, sans-serif`;fs-=2;}while(x.measureText(tt).width>out.width-pad*2&&fs>18);x.fillText(tt,pad,pad+38);
- x.fillStyle="#5b6f86";x.font="500 24px Figtree, sans-serif";x.fillText(document.getElementById("chSub").textContent+"  ·  Aitken Spence PLC Annual Report 2025/26",pad,pad+80);
- x.drawImage(src,pad,pad+th);
- const blob=await new Promise(r=>out.toBlob(r,"image/png"));
- const name="aitken-spence-"+sel.value+"-"+(view||"chart")+".png";
- try{
-  await dlReady;
-  if(!downloadsApi){msg.textContent="Saving images isn't available in this view.";return;}
-  msg.textContent="Saving…";await downloadsApi.save({filename:name,data:blob});msg.textContent="Chart image saved.";
- }catch(err){msg.textContent=err&&err.code==="declined"?"Save cancelled.":"Couldn't save the image here.";}
+/* ---- events ---- */
+$("genTabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;tab=b.dataset.tab;draw();});
+$("catTabs").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;T.cat=b.dataset.c;renderTrendUI();});
+$("indSearch").addEventListener("input",e=>{T.q=e.target.value;renderTrendUI();});
+$("indList").addEventListener("change",e=>{const k=e.target.dataset.k;if(!k)return;T.sel=e.target.checked?[...T.sel,k]:T.sel.filter(x=>x!==k);if(!T.sel.length)T.sel=[k];draw();});
+$("selChips").addEventListener("click",e=>{const k=e.target.dataset.rm;if(!k||T.sel.length===1)return;T.sel=T.sel.filter(x=>x!==k);draw();});
+$("yrPills").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const y=b.dataset.y;
+ if(y==="all")T.years=YEARS.slice();else if(T.years.includes(y)){if(T.years.length>2)T.years=T.years.filter(x=>x!==y);}else T.years=YEARS.filter(x=>T.years.includes(x)||x===y);draw();});
+$("ctypes").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.disabled)return;T.type=b.dataset.t;draw();});
+$("mixSel").innerHTML=DSGROUPS.map(g=>`<optgroup label="${g[0]}">${g[1].map(k=>`<option value="${k}">${DS[k].n}</option>`).join("")}</optgroup>`).join("");
+$("mixSel").addEventListener("change",e=>{M={key:e.target.value,type:null};draw();});
+$("mixTypes").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;M.type=b.dataset.t;draw();});
+$("valsChk").addEventListener("change",e=>{showVals=e.target.checked;draw();});
+$("resetBtn").addEventListener("click",()=>{T={sel:["rev","pbt"],years:YEARS.slice(),type:"combo",cat:"all",q:""};$("indSearch").value="";M={key:"secPbt",type:null};draw();});
+$("indSearch").value=T.q||"";
+/* ---- exports ---- */
+function exportCanvas(bg){
+ const src=chart.canvas,pad=56,th=150,out=document.createElement("canvas");out.width=src.width+pad*2;out.height=src.height+pad*2+th;
+ const x=out.getContext("2d");x.fillStyle=bg;x.fillRect(0,0,out.width,out.height);
+ const tt=$("chTitle").textContent;let fs=40;do{x.font=`800 ${fs}px Archivo, Figtree, sans-serif`;fs-=2;}while(x.measureText(tt).width>out.width-pad*2&&fs>18);
+ x.fillStyle="#0d2440";x.fillText(tt,pad,pad+38);x.fillStyle="#5b6f86";x.font="500 24px Figtree, sans-serif";x.fillText($("chSub").textContent,pad,pad+80);
+ x.font="500 20px Figtree, sans-serif";x.fillText("Source: Aitken Spence PLC Annual Report 2025/26",pad,pad+112);x.drawImage(src,pad,pad+th);return out;
+}
+async function deliver(name,data,msg){
+ const m=$("pngMsg");try{await dlReady;if(!downloadsApi){m.textContent="Saving files isn't available in this view.";return;}m.textContent="Saving…";await downloadsApi.save({filename:name,data});m.textContent=msg;}
+ catch(err){m.textContent=err&&err.code==="declined"?"Save cancelled.":"Couldn't save the file here.";}
+}
+const fileBase=()=>"aitken-spence-"+(tab==="trend"?T.sel.join("-"):M.key);
+$("expBar").addEventListener("click",async e=>{const b=e.target.closest("button");if(!b)return;const f=b.dataset.f;
+ if(f==="csv"){let rows;if(tab==="trend"){const yrs=YEARS.filter(y=>T.years.includes(y));rows=[["Indicator","Unit",...yrs.map(y=>"FY"+y)],...T.sel.map(k=>{const i=INDK[k];return[i.n,i.u,...yrs.map(y=>i.v[YEARS.indexOf(y)]??"")];})];}
+  else{const o=DS[M.key];rows=[[o.kind==="parts"?"Item":"",...o.series.map(s=>s.name)],...o.labels.map((l,i)=>[l,...o.series.map(s=>s.data[i])])];}
+  const csv=rows.map(r=>r.map(c=>/[",]/.test(String(c))?`"${String(c).replace(/"/g,'""')}"`:c).join(",")).join("\r\n");
+  return deliver(fileBase()+".csv",new Blob(["﻿"+csv],{type:"text/csv"}),"Data saved as CSV.");}
+ if(!chart){$("pngMsg").textContent="Switch to a chart view to save an image.";return;}
+ if(f==="png"){const c=exportCanvas("#fff");return deliver(fileBase()+".png",await new Promise(r=>c.toBlob(r,"image/png")),"Chart saved as PNG.");}
+ if(f==="jpg"){const c=exportCanvas("#fff");return deliver(fileBase()+".jpg",await new Promise(r=>c.toBlob(r,"image/jpeg",.92)),"Chart saved as JPG.");}
+ if(f==="pdf"){if(!window.jspdf){$("pngMsg").textContent="The PDF tool didn't load.";return;}
+  const c=exportCanvas("#fff"),{jsPDF}=window.jspdf,doc=new jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
+  let w=267,h=w*c.height/c.width;if(h>180){h=180;w=h*c.width/c.height;}doc.addImage(c.toDataURL("image/png"),"PNG",15,12,w,h);
+  doc.setFontSize(8);doc.setTextColor(91,111,134);doc.text("Generated from the Aitken Spence PLC Annual Report 2025/26 microsite.",15,200);
+  return deliver(fileBase()+".pdf",doc.output("blob"),"Chart saved as PDF.");}
 });
 draw();
 
