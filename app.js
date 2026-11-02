@@ -751,7 +751,7 @@ const hero=document.querySelector(".sky"),lc=document.querySelector(".stage .lef
 let ticking=false;
 function onScroll(){ticking=false;const y=scrollY,hb=hero.getBoundingClientRect().bottom;
  fn.classList.toggle("show",hb<80);
- if(!RM&&hb>0){word.style.transform=`translateY(${y*.35}px)`;if(lc)lc.style.transform=`translateY(${y*-.08}px)`;if(rc)rc.style.transform=`translateY(${y*-.14}px)`;}
+ if(!RM&&hb>0){if(word)word.style.transform=`translateY(${y*.35}px)`;if(lc)lc.style.transform=`translateY(${y*-.08}px)`;if(rc)rc.style.transform=`translateY(${y*-.14}px)`;}
  let cur=null;SECS.forEach(s=>{const el=document.getElementById(s[0]);if(el&&el.getBoundingClientRect().top<innerHeight*.45)cur=s[0];});
  moveInd(cur?links.find(l=>l.dataset.s===cur):null);}
 addEventListener("scroll",()=>{if(!ticking){ticking=true;requestAnimationFrame(onScroll);}},{passive:true});
